@@ -1,0 +1,2826 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scratch &amp; TurboWarp → HTML Studio</title>
+<link id="studio-favicon" rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%23ff4c4c'/><stop offset='1' stop-color='%23ff7b54'/></linearGradient></defs><rect width='64' height='64' rx='16' fill='url(%23g)'/><path d='M23 18l25 14-25 14z' fill='white'/></svg>">
+<style>
+  :root {
+    --bg: #0b0d14;
+    --bg2: #131722;
+    --bg3: #1b2131;
+    --border: #2a3247;
+    --text: #eef2fa;
+    --muted: #93a0be;
+    --accent: #ff4c4c;
+    --accent2: #ff7b54;
+    --accent-soft: rgba(255, 76, 76, 0.14);
+    --success: #22c55e;
+    --warn: #f59e0b;
+    --danger: #ef4444;
+    --shadow: 0 18px 46px rgba(0, 0, 0, 0.45);
+    --radius: 16px;
+    --font: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  [data-theme="light"] {
+    --bg: #f1f4fa;
+    --bg2: #ffffff;
+    --bg3: #e9eef7;
+    --border: #d3dced;
+    --text: #131826;
+    --muted: #5a6782;
+    --accent: #4f46e5;
+    --accent2: #7c3aed;
+    --accent-soft: rgba(79, 70, 229, 0.11);
+    --shadow: 0 14px 36px rgba(18, 28, 56, 0.08);
+  }
+
+  [data-theme="cyberpunk"] {
+    --bg: #060510;
+    --bg2: #0f0d22;
+    --bg3: #191536;
+    --border: #37286e;
+    --text: #f3ecff;
+    --muted: #a699d9;
+    --accent: #00f0ff;
+    --accent2: #ff2a85;
+    --accent-soft: rgba(0, 240, 255, 0.14);
+    --shadow: 0 16px 44px rgba(0, 240, 255, 0.12);
+  }
+
+  [data-theme="ocean"] {
+    --bg: #071320;
+    --bg2: #0c1f33;
+    --bg3: #132d48;
+    --border: #20466b;
+    --text: #e7f4ff;
+    --muted: #8bb2d4;
+    --accent: #0ea5e9;
+    --accent2: #14b8a6;
+    --accent-soft: rgba(14, 165, 233, 0.16);
+  }
+
+  [data-theme="emerald"] {
+    --bg: #09130f;
+    --bg2: #102019;
+    --bg3: #172e24;
+    --border: #264839;
+    --text: #ebfaf2;
+    --muted: #8bb59f;
+    --accent: #10b981;
+    --accent2: #84cc16;
+    --accent-soft: rgba(16, 185, 129, 0.15);
+  }
+
+  [data-theme="retro"] {
+    --bg: #140e1c;
+    --bg2: #1f162c;
+    --bg3: #2b1f3d;
+    --border: #493366;
+    --text: #fff4e0;
+    --muted: #c2add6;
+    --accent: #f59e0b;
+    --accent2: #ec4899;
+    --accent-soft: rgba(245, 158, 11, 0.16);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    background-image: radial-gradient(circle at 12% 0%, var(--accent-soft), transparent 42%),
+                      radial-gradient(circle at 88% 10%, color-mix(in srgb, var(--accent2) 10%, transparent), transparent 36%);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+
+  a { color: var(--accent); text-decoration: none; }
+  button, input, select, textarea { font-family: inherit; font-size: 13.5px; }
+
+  .ico { width: 17px; height: 17px; flex-shrink: 0; display: inline-block; vertical-align: middle; }
+  .ico-lg { width: 22px; height: 22px; }
+  .ico-xl { width: 40px; height: 40px; }
+
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 14px; flex-wrap: wrap;
+    padding: 11px 22px;
+    background: color-mix(in srgb, var(--bg2) 84%, transparent);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .brand-logo {
+    width: 40px; height: 40px; border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: grid; place-items: center; color: #fff;
+    box-shadow: 0 8px 22px var(--accent-soft);
+    flex-shrink: 0;
+  }
+  .brand h1 { margin: 0; font-size: 16.5px; font-weight: 800; letter-spacing: -0.02em; }
+  .brand small { display: block; color: var(--muted); font-size: 11.5px; }
+
+  .top-controls { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  .social-strip {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 6px; border-radius: 11px;
+    background: var(--bg3); border: 1px solid var(--border);
+  }
+  .social-ico-btn {
+    width: 30px; height: 30px; border-radius: 8px;
+    display: grid; place-items: center; color: var(--muted);
+    transition: .18s ease;
+  }
+  .social-ico-btn:hover { background: var(--bg2); color: var(--text); transform: translateY(-1px); }
+  .social-ico-btn.itch:hover { color: #fa5c5c; }
+  .social-ico-btn.ig:hover { color: #e1306c; }
+  .social-ico-btn.yt:hover { color: #ff2020; }
+  .social-ico-btn.gh:hover { color: var(--text); }
+
+  .status-chip {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 6px 11px; border-radius: 10px;
+    background: var(--bg3); border: 1px solid var(--border);
+    font-size: 12px; font-weight: 600; color: var(--text);
+  }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--warn); }
+  .dot.ok { background: var(--success); }
+
+  .select-compact {
+    background: var(--bg3); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px;
+    padding: 7px 10px; cursor: pointer; font-weight: 600;
+  }
+
+  .studio {
+    width: 100%; max-width: 1500px; margin: 0 auto;
+    padding: 20px; flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(370px, 0.95fr);
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 1060px) { .studio { grid-template-columns: 1fr; } }
+
+  .card {
+    background: color-mix(in srgb, var(--bg2) 94%, transparent);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .tabs {
+    display: flex; gap: 5px; padding: 10px 12px;
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto;
+  }
+  .tab-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 8px 12px; border-radius: 10px;
+    border: 1px solid transparent;
+    background: transparent; color: var(--muted);
+    cursor: pointer; font-weight: 650; white-space: nowrap;
+    transition: .18s ease;
+  }
+  .tab-btn:hover { color: var(--text); background: color-mix(in srgb, var(--bg2) 60%, transparent); }
+  .tab-btn.active {
+    background: var(--bg2); color: var(--text);
+    border-color: var(--border);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+  }
+  .tab-btn.active .tab-ico { color: var(--accent); }
+
+  .tab-panel { display: none; padding: 20px; }
+  .tab-panel.active { display: block; animation: fadeUp .18s ease; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .sec-title {
+    margin: 0 0 12px; font-size: 14.5px; font-weight: 750;
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  }
+  .divider { height: 1px; background: var(--border); margin: 18px 0; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 640px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 13px; }
+  .field label { font-size: 12.5px; font-weight: 600; color: var(--muted); display: flex; justify-content: space-between; }
+  .input, select.input, textarea.input {
+    width: 100%; padding: 9px 12px;
+    background: var(--bg3); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px;
+    outline: none; transition: border-color .15s, box-shadow .15s;
+  }
+  .input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+  textarea.input { min-height: 82px; resize: vertical; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; }
+
+  .color-row { display: flex; gap: 8px; align-items: center; }
+  input[type="color"] {
+    width: 42px; height: 36px; padding: 2px;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 9px; cursor: pointer; flex-shrink: 0;
+  }
+
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 10px 13px; border-radius: 11px;
+    background: var(--bg3); border: 1px solid var(--border);
+    margin-bottom: 10px;
+  }
+  .toggle-row strong { display: block; font-size: 13px; }
+  .toggle-row small { display: block; color: var(--muted); font-size: 11.5px; }
+
+  .switch { position: relative; width: 44px; height: 24px; flex-shrink: 0; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; inset: 0; cursor: pointer;
+    background: var(--border); border-radius: 999px; transition: .2s;
+  }
+  .slider::before {
+    content: ""; position: absolute; width: 18px; height: 18px; left: 3px; top: 3px;
+    background: #fff; border-radius: 50%; transition: .2s;
+  }
+  .switch input:checked + .slider { background: var(--accent); }
+  .switch input:checked + .slider::before { transform: translateX(20px); }
+
+  .dropzone {
+    border: 2px dashed var(--border);
+    border-radius: 15px;
+    padding: 28px 18px;
+    text-align: center;
+    background: color-mix(in srgb, var(--bg3) 55%, transparent);
+    cursor: pointer; transition: .2s ease;
+  }
+  .dropzone:hover, .dropzone.drag { border-color: var(--accent); background: var(--accent-soft); }
+  .dropzone-ico {
+    width: 58px; height: 58px; margin: 0 auto 10px; border-radius: 16px;
+    background: var(--accent-soft); color: var(--accent);
+    display: grid; place-items: center;
+  }
+  .dropzone h3 { margin: 6px 0 4px; font-size: 15px; }
+  .dropzone p { margin: 0; color: var(--muted); font-size: 12.5px; }
+
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 9px 15px; border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg3); color: var(--text);
+    cursor: pointer; font-weight: 650; transition: .16s ease;
+  }
+  .btn:hover { border-color: var(--accent); transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; border-color: transparent;
+    box-shadow: 0 8px 22px var(--accent-soft);
+  }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-sm { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+
+  .preset-chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 12px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 11px; border-radius: 10px;
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text); font-size: 12px; font-weight: 600;
+    cursor: pointer; transition: .15s;
+  }
+  .chip:hover, .chip.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+
+  .inspector {
+    margin-top: 14px; padding: 14px; border-radius: 12px;
+    background: var(--bg3); border: 1px solid var(--border);
+  }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+  @media (max-width: 600px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+  .stat-box {
+    padding: 9px; border-radius: 9px; background: var(--bg2); border: 1px solid var(--border);
+    text-align: center; font-variant-numeric: tabular-nums;
+  }
+  .stat-box b { display: block; font-size: 14px; color: var(--accent); }
+  .stat-box span { font-size: 11px; color: var(--muted); }
+
+  .sticky-col { position: sticky; top: 82px; display: flex; flex-direction: column; gap: 16px; }
+  .browser-tab-mock {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 14px; background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  .win-dots { display: flex; gap: 6px; }
+  .win-dots i { width: 10px; height: 10px; border-radius: 50%; display: block; }
+  .tab-pill {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--bg2); border: 1px solid var(--border);
+    padding: 5px 12px; border-radius: 8px;
+    max-width: 240px; font-size: 12.5px; font-weight: 600;
+  }
+  .tab-pill img { width: 16px; height: 16px; border-radius: 3px; object-fit: contain; }
+  .tab-pill span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .preview-box {
+    position: relative;
+    background: #06080d;
+    aspect-ratio: 16 / 9;
+    max-height: 410px;
+    width: 100%;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .preview-box iframe { width: 100%; height: 100%; border: 0; background: transparent; }
+  .preview-placeholder { text-align: center; padding: 24px; color: #b7c0d8; }
+  .ratio-badge {
+    display: inline-block; padding: 4px 11px; border-radius: 8px;
+    background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.16);
+    font-size: 12px; font-weight: 700; margin-bottom: 8px; font-variant-numeric: tabular-nums;
+  }
+
+  .export-actions { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+  .progress-wrap { height: 7px; border-radius: 999px; background: var(--bg3); overflow: hidden; display: none; }
+  .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), var(--accent2)); transition: width .2s; }
+  .status-log { font-size: 12px; color: var(--muted); min-height: 18px; display: flex; justify-content: space-between; gap: 8px; font-variant-numeric: tabular-nums; }
+
+  .fav-preview-lg {
+    width: 54px; height: 54px; border-radius: 12px;
+    border: 1px solid var(--border); background: var(--bg3);
+    display: grid; place-items: center; overflow: hidden; flex-shrink: 0;
+  }
+  .fav-preview-lg img { width: 100%; height: 100%; object-fit: contain; }
+
+  .dev-hero {
+    display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    padding: 18px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--accent-soft), color-mix(in srgb, var(--bg3) 85%, transparent));
+    border: 1px solid var(--border);
+  }
+  .dev-avatar {
+    width: 60px; height: 60px; border-radius: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 22px;
+    flex-shrink: 0; box-shadow: 0 10px 24px var(--accent-soft);
+  }
+  .social-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px;
+  }
+  @media (max-width: 600px) { .social-grid { grid-template-columns: 1fr; } }
+  .social-card {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; border-radius: 12px;
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text); transition: .18s ease;
+  }
+  .social-card:hover { border-color: var(--accent); transform: translateY(-2px); background: var(--bg2); }
+  .social-badge {
+    width: 38px; height: 38px; border-radius: 10px;
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .social-badge.itch { background: rgba(250, 92, 92, 0.16); color: #fa5c5c; }
+  .social-badge.ig { background: rgba(225, 48, 108, 0.16); color: #e1306c; }
+  .social-badge.yt { background: rgba(255, 0, 0, 0.16); color: #ff2b2b; }
+  .social-badge.gh { background: rgba(148, 163, 184, 0.18); color: var(--text); }
+  .social-card strong { display: block; font-size: 13.5px; }
+  .social-card span { display: block; font-size: 11.5px; color: var(--muted); }
+
+  .studio-footer {
+    border-top: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg2) 82%, transparent);
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    font-size: 12.5px; color: var(--muted);
+  }
+  .footer-links { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .footer-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 10px; border-radius: 10px;
+    background: var(--bg3); border: 1px solid var(--border);
+    color: var(--text); font-weight: 600; font-size: 12px;
+    transition: .16s ease;
+  }
+  .footer-link:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0, 0, 0, 0.72); backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    width: 100%; max-width: 920px; max-height: 88vh;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+  }
+  .modal-head {
+    padding: 14px 18px; background: var(--bg3); border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-body { padding: 16px; overflow: auto; flex: 1; }
+  .code-view {
+    width: 100%; height: 420px; background: var(--bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 10px; padding: 12px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px;
+  }
+
+  #toast-wrap {
+    position: fixed; bottom: 20px; right: 20px; z-index: 300;
+    display: flex; flex-direction: column; gap: 8px; max-width: 360px;
+  }
+  .toast-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 14px; border-radius: 12px;
+    background: var(--bg2); border: 1px solid var(--border);
+    color: var(--text); font-size: 12.5px; font-weight: 600;
+    box-shadow: var(--shadow);
+  }
+  .toast-item.err { border-color: var(--danger); }
+  .toast-item.ok { border-color: var(--success); }
+</style>
+</head>
+<body data-theme="dark">
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-logo">
+      <svg class="ico-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+    </div>
+    <div>
+      <h1 data-i18n="appTitle">Scratch &amp; TurboWarp → HTML Studio</h1>
+      <small data-i18n="appSubtitle">Yerel ve Online • 1920×1080 Full HD • Çevrimdışı Paketleyici</small>
+    </div>
+  </div>
+
+  <div class="top-controls">
+    <div class="social-strip" title="Antrikot Ve Güller">
+      <a class="social-ico-btn itch" href="https://antrikotveguller.itch.io/" target="_blank" rel="noopener noreferrer" title="itch.io — Antrikot Ve Güller" aria-label="itch.io">
+        <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M3.13 3.7C2.1 4.3 1.07 6.3 1.07 7.45v1.32c0 1.46 1.36 2.74 2.57 2.74 1.47 0 2.69-1.22 2.69-2.66 0 1.44 1.18 2.66 2.65 2.66 1.46 0 2.64-1.22 2.64-2.66 0 1.44 1.24 2.66 2.7 2.66 1.47 0 2.65-1.22 2.65-2.66 0 1.44 1.22 2.66 2.69 2.66 1.21 0 2.57-1.28 2.57-2.74V7.45c0-1.15-1.03-3.15-2.06-3.75-1.93-.21-5.6-.28-8.17-.28-2.57 0-6.24.07-8.17.28zm6.45 9.13c-.93 0-1.73-.44-2.25-1.09-.54.67-1.36 1.09-2.29 1.09-.56 0-1.08-.14-1.54-.38v7.15c0 .93.77 1.69 1.7 1.69h13.6c.93 0 1.7-.76 1.7-1.69v-7.15c-.46.24-.98.38-1.54.38-.93 0-1.75-.42-2.29-1.09-.52.65-1.32 1.09-2.25 1.09-.95 0-1.78-.45-2.3-1.13-.52.68-1.35 1.13-2.3 1.13zm-.47 2.27h2.15v1.96h1.48V15.1h2.15v2.92h-1.48v1.45h-2.82v-1.45H9.11V15.1z"/></svg>
+      </a>
+      <a class="social-ico-btn ig" href="https://www.instagram.com/antrikotveguller/" target="_blank" rel="noopener noreferrer" title="Instagram — @antrikotveguller" aria-label="Instagram">
+        <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      </a>
+      <a class="social-ico-btn yt" href="https://www.youtube.com/@AntrikotVeGuller" target="_blank" rel="noopener noreferrer" title="YouTube — @AntrikotVeGuller" aria-label="YouTube">
+        <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+      </a>
+      <a class="social-ico-btn gh" href="https://github.com/antrikotveguller" target="_blank" rel="noopener noreferrer" title="GitHub — antrikotveguller" aria-label="GitHub">
+        <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.04c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12 12 0 0 0 12 .3z"/></svg>
+      </a>
+    </div>
+
+    <div class="status-chip" id="engineStatusPill" title="TurboWarp Scaffolding Engine">
+      <span class="dot" id="engineDot"></span>
+      <span id="engineStatusText">Motor Kontrol Ediliyor...</span>
+    </div>
+
+    <select id="langSelect" class="select-compact" aria-label="Language">
+      <option value="tr">TR • Türkçe</option>
+      <option value="en">EN • English</option>
+      <option value="de">DE • Deutsch</option>
+      <option value="es">ES • Español</option>
+      <option value="fr">FR • Français</option>
+      <option value="az">AZ • Azərbaycan</option>
+    </select>
+
+    <select id="themeSelect" class="select-compact" aria-label="Theme">
+      <option value="dark" data-i18n="themeDark">Tema: Turbo Koyu</option>
+      <option value="light" data-i18n="themeLight">Tema: Aydınlık</option>
+      <option value="cyberpunk" data-i18n="themeCyberpunk">Tema: Siberpunk</option>
+      <option value="ocean" data-i18n="themeOcean">Tema: Okyanus</option>
+      <option value="emerald" data-i18n="themeEmerald">Tema: Zümrüt</option>
+      <option value="retro" data-i18n="themeRetro">Tema: Retro</option>
+    </select>
+
+    <button class="btn btn-sm" id="btnExportCfg" title="Ayarları JSON İndir" data-i18n-title="exportCfgTitle">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+    </button>
+    <button class="btn btn-sm" id="btnImportCfg" title="Ayarları JSON Yükle" data-i18n-title="importCfgTitle">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+    </button>
+    <input type="file" id="cfgFileInput" accept=".json" hidden>
+  </div>
+</header>
+
+<main class="studio">
+  <section class="card">
+    <nav class="tabs" id="tabNav">
+      <button class="tab-btn active" data-tab="project">
+        <span class="tab-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></span>
+        <span data-i18n="tabProject">Proje &amp; Analiz</span>
+      </button>
+      <button class="tab-btn" data-tab="appearance">
+        <span class="tab-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></svg></span>
+        <span data-i18n="tabAppearance">Favicon &amp; Görünüm</span>
+      </button>
+      <button class="tab-btn" data-tab="stage">
+        <span class="tab-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></span>
+        <span data-i18n="tabStage">Sahne &amp; 1920×1080</span>
+      </button>
+      <button class="tab-btn" data-tab="engine">
+        <span class="tab-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></span>
+        <span data-i18n="tabEngine">TurboWarp Motoru</span>
+      </button>
+      <button class="tab-btn" data-tab="controls">
+        <span class="tab-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="6" y1="12" x2="10" y2="12"/><line x1="8" y1="10" x2="8" y2="14"/><line x1="15" y1="13" x2="15.01" y2="13"/><line x1="18" y1="11" x2="18.01" y2="11"/><rect x="2" y="6" width="20" height="12" rx="4"/></svg></span>
+        <span data-i18n="tabControls">Kontroller &amp; Bulut</span>
+      </button>
+      <button class="tab-btn" data-tab="mobile">
+        <span class="tab-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg></span>
+        <span data-i18n="tabMobile">Mobil &amp; Gelişmiş</span>
+      </button>
+      <button class="tab-btn" data-tab="about">
+        <span class="tab-ico"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+        <span data-i18n="tabAbout">Hakkında</span>
+      </button>
+    </nav>
+
+    <div class="tab-panel active" id="panel-project">
+      <div class="dropzone" id="dropzone">
+        <div class="dropzone-ico">
+          <svg class="ico-xl" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+        <h3 data-i18n="dropTitle">Scratch / TurboWarp Projesini Buraya Sürükleyin</h3>
+        <p data-i18n="dropDesc">.sb3, .sb2, .sb veya .pmp dosyaları desteklenir (Tamamen cihazınızda işlenir)</p>
+        <input type="file" id="projectFileInput" accept=".sb3,.sb2,.sb,.pmp,.zip" hidden>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="sec-title"><span data-i18n="loadFromIdTitle">Veya Scratch Proje ID / URL ile Yükle (Online)</span></div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <input type="text" class="input" id="projectIdInput" style="flex:1; min-width:200px" placeholder="Örn: 10128407 veya https://scratch.mit.edu/projects/..." data-i18n-placeholder="remotePlaceholder">
+        <button class="btn btn-primary" id="btnLoadRemote">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span data-i18n="btnLoad">Yükle</span>
+        </button>
+      </div>
+      <small style="color:var(--muted); display:block; margin-top:6px;" data-i18n="remoteHint">Not: Paylaşılmamış (unshared) projeler için bilgisayardan .sb3 dosyası yükleyin.</small>
+
+      <div class="inspector" id="inspectorBox" style="display:none;">
+        <div class="sec-title" style="margin-bottom:4px;">
+          <span id="inspName">proje.sb3</span>
+          <button class="btn btn-sm btn-primary" id="btnApplyTw" style="display:none;">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span data-i18n="applyTwSettings">TurboWarp Ayarlarını Uygula</span>
+          </button>
+        </div>
+        <small id="inspSize" style="color:var(--muted)"></small>
+        <div class="stat-grid">
+          <div class="stat-box"><b id="stRes">480×360</b><span data-i18n="statStage">Sahne</span></div>
+          <div class="stat-box"><b id="stSprites">0</b><span data-i18n="statSprites">Kukla</span></div>
+          <div class="stat-box"><b id="stAssets">0</b><span data-i18n="statAssets">Kostüm/Ses</span></div>
+          <div class="stat-box"><b id="stFps">30</b><span>FPS</span></div>
+        </div>
+        <div id="inspExtBox" style="margin-top:10px; font-size:12px; color:var(--muted); display:none;"></div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-appearance">
+      <div class="grid-2">
+        <div class="field">
+          <label data-i18n="lblPageTitle">Sayfa Başlığı (&lt;title&gt;)</label>
+          <input type="text" class="input" id="cfgTitle" value="Benim Scratch Oyunum">
+        </div>
+        <div class="field">
+          <label data-i18n="lblMetaDesc">Sayfa Açıklaması (Meta Description)</label>
+          <input type="text" class="input" id="cfgDesc" value="TurboWarp & Scratch HTML5 Oyunu">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="sec-title"><span data-i18n="secFavicon">Favicon (Tarayıcı Sekme İkonu)</span></div>
+      <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin-bottom:14px;">
+        <div class="fav-preview-lg"><img id="favPreviewImg" alt="Favicon"></div>
+        <div style="flex:1; min-width:220px; display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn" id="btnUploadFavicon">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span data-i18n="btnUploadFav">Resim Seç (.png/.ico/.svg)</span>
+          </button>
+          <input type="file" id="faviconFileInput" accept="image/*" hidden>
+          <button class="btn" id="btnGenEmojiFav">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 10.7l-5 4.2 1.5 6.1L12 17.8 7.5 21 9 14.9 4 10.7l6.1-1.9z"/></svg>
+            <span data-i18n="btnGenFav">Harf/Sembolden Üret</span>
+          </button>
+          <button class="btn" id="btnClearFavicon" title="Temizle" data-i18n-title="clear">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="grid-3">
+        <div class="field">
+          <label data-i18n="lblFavChar">Harf veya Sembol</label>
+          <input type="text" class="input" id="favEmojiInput" value="A" maxlength="3">
+        </div>
+        <div class="field">
+          <label data-i18n="lblFavBg">İkon Arka Planı</label>
+          <div class="color-row">
+            <input type="color" id="favBgColor" value="#ff4c4c">
+            <input type="text" class="input" id="favBgColorTxt" value="#ff4c4c">
+          </div>
+        </div>
+        <div class="field">
+          <label data-i18n="lblAccentColor">Vurgu Rengi (Accent)</label>
+          <div class="color-row">
+            <input type="color" id="cfgAccent" value="#ff4c4c">
+            <input type="text" class="input" id="cfgAccentTxt" value="#ff4c4c">
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="sec-title"><span data-i18n="secBackground">Arka Plan &amp; İmleç</span></div>
+      <div class="grid-2">
+        <div class="field">
+          <label data-i18n="lblBgType">Arka Plan Tipi</label>
+          <select class="input" id="cfgBgType">
+            <option value="solid" data-i18n="optSolid">Düz Renk</option>
+            <option value="gradient" data-i18n="optGradient">Gradyan (Geçişli)</option>
+            <option value="image" data-i18n="optImage">Özel Görsel</option>
+          </select>
+        </div>
+        <div class="field" id="bgColor1Wrap">
+          <label data-i18n="lblBgColor1">Arka Plan Rengi</label>
+          <div class="color-row">
+            <input type="color" id="cfgBg1" value="#000000">
+            <input type="text" class="input" id="cfgBg1Txt" value="#000000">
+          </div>
+        </div>
+        <div class="field" id="bgColor2Wrap" style="display:none;">
+          <label data-i18n="lblBgColor2">İkinci Renk (Gradyan)</label>
+          <div class="color-row">
+            <input type="color" id="cfgBg2" value="#1e1b4b">
+            <input type="text" class="input" id="cfgBg2Txt" value="#1e1b4b">
+          </div>
+        </div>
+        <div class="field" id="bgImageWrap" style="display:none;">
+          <label data-i18n="lblBgImg">Arka Plan Resmi Yükle</label>
+          <button class="btn" id="btnUploadBg">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <span data-i18n="btnChooseImage">Görsel Seç</span>
+          </button>
+          <input type="file" id="bgFileInput" accept="image/*" hidden>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label data-i18n="lblCursor">Fare İmleci (Cursor)</label>
+          <select class="input" id="cfgCursor">
+            <option value="auto" data-i18n="curAuto">Varsayılan</option>
+            <option value="none" data-i18n="curNone">Gizli (FPS / Nişancı)</option>
+            <option value="crosshair" data-i18n="curCross">Nişangah (Crosshair)</option>
+            <option value="pointer" data-i18n="curPointer">El İşareti</option>
+            <option value="custom" data-i18n="curCustom">Özel İmleç Resmi</option>
+          </select>
+        </div>
+        <div class="field" id="customCursorWrap" style="display:none;">
+          <label data-i18n="lblCustomCursor">Özel İmleç (.png/.cur, max 64px)</label>
+          <button class="btn" id="btnUploadCursor">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+            <span data-i18n="btnChooseCursor">İmleç Seç</span>
+          </button>
+          <input type="file" id="cursorFileInput" accept="image/*" hidden>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-stage">
+      <div class="sec-title"><span data-i18n="secResPresets">Hızlı Çözünürlük Önayarları (TurboWarp &amp; Scratch)</span></div>
+      <div class="preset-chips" id="resPresets">
+        <button class="chip" data-w="1920" data-h="1080">1920×1080 (Full HD 16:9)</button>
+        <button class="chip" data-w="1280" data-h="720">1280×720 (HD 16:9)</button>
+        <button class="chip" data-w="2560" data-h="1440">2560×1440 (2K QHD)</button>
+        <button class="chip active" data-w="480" data-h="360" data-i18n="presetClassic">480×360 (Klasik Scratch)</button>
+        <button class="chip" data-w="640" data-h="360" data-i18n="presetWide">640×360 (Geniş Scratch)</button>
+        <button class="chip" data-w="1080" data-h="1920" data-i18n="presetVertical">1080×1920 (Dikey 9:16)</button>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label data-i18n="lblWidth">Sahne Genişliği (px)</label>
+          <input type="number" class="input" id="cfgWidth" value="480" min="1" max="7680">
+        </div>
+        <div class="field">
+          <label data-i18n="lblHeight">Sahne Yüksekliği (px)</label>
+          <input type="number" class="input" id="cfgHeight" value="360" min="1" max="4320">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="field">
+          <label data-i18n="lblResizeMode">Ekrana Ölçekleme Modu</label>
+          <select class="input" id="cfgResizeMode">
+            <option value="preserve-ratio" data-i18n="resPreserve">En-Boy Oranını Koru (Önerilen)</option>
+            <option value="stretch" data-i18n="resStretch">Ekrana Tam Uzat (Stretch)</option>
+            <option value="dynamic-resize" data-i18n="resDynamic">Dinamik Boyutlandır</option>
+          </select>
+        </div>
+        <div class="field">
+          <label data-i18n="lblMaxTex">Maksimum Doku Boyutu (HD Kalite)</label>
+          <select class="input" id="cfgMaxTexture">
+            <option value="2048" data-i18n="texStandard">2048 px (Standart)</option>
+            <option value="4096" selected data-i18n="texRecommended">4096 px (1920×1080 İçin Önerilen)</option>
+            <option value="8192" data-i18n="texUltra">8192 px (Ultra 4K/8K)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-engine">
+      <div class="grid-2">
+        <div class="field">
+          <label data-i18n="lblFps">Kare Hızı (FPS) — 0 = VSync</label>
+          <input type="number" class="input" id="cfgFps" value="60" min="0" max="500">
+        </div>
+        <div class="field">
+          <label data-i18n="lblMaxClones">Maksimum Klon (İkiz) Sayısı</label>
+          <select class="input" id="cfgMaxClones">
+            <option value="300" data-i18n="clonesClassic">300 (Klasik Scratch)</option>
+            <option value="1000">1000</option>
+            <option value="5000">5000</option>
+            <option value="Infinity" selected data-i18n="clonesUnlimited">Sınırsız (TurboWarp)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <div><strong data-i18n="togCompiler">TurboWarp Derleyici (Compiler)</strong><small data-i18n="togCompilerDesc">Projeleri JavaScript'e derleyerek 10-100x daha hızlı çalıştırır</small></div>
+        <label class="switch"><input type="checkbox" id="cfgCompiler" checked><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div><strong data-i18n="togInterp">Ara Kare Yumuşatma (Interpolation)</strong><small data-i18n="togInterpDesc">30 FPS blokları bile yüksek Hz monitörlerde akıcı gösterir</small></div>
+        <label class="switch"><input type="checkbox" id="cfgInterpolation"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div><strong data-i18n="togHqPen">Yüksek Kaliteli Kalem (High Quality Pen)</strong><small data-i18n="togHqPenDesc">Kalem çizimlerini ekran çözünürlüğünde (1920×1080) keskin çizer</small></div>
+        <label class="switch"><input type="checkbox" id="cfgHqPen" checked><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div><strong data-i18n="togTurbo">Turbo Mod</strong><small data-i18n="togTurboDesc">Döngüleri ekran yenilemesini beklemeden olabildiğince hızlı yürütür</small></div>
+        <label class="switch"><input type="checkbox" id="cfgTurbo"><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div><strong data-i18n="togFencing">Kukla Ekran Sınırlarını Kaldır (Disable Fencing)</strong><small data-i18n="togFencingDesc">Kuklaların ekran dışına tamamen çıkabilmesine izin verir</small></div>
+        <label class="switch"><input type="checkbox" id="cfgDisableFencing" checked><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div><strong data-i18n="togMisc">Çeşitli Sınırları Kaldır (Remove Misc Limits)</strong><small data-i18n="togMiscDesc">Ses efekti, kalem boyutu ve liste uzunluğu sınırlarını kaldırır</small></div>
+        <label class="switch"><input type="checkbox" id="cfgRemoveMisc" checked><span class="slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div><strong data-i18n="togWarp">Warp Zamanlayıcı (Donma Koruması)</strong><small data-i18n="togWarpDesc">Ekransız özel bloklarda sonsuz döngü olursa tarayıcıyı dondurmaz</small></div>
+        <label class="switch"><input type="checkbox" id="cfgWarpTimer"><span class="slider"></span></label>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-controls">
+      <div class="grid-2">
+        <div class="field">
+          <label data-i18n="lblCtrlBar">Kontrol Çubuğu Modu</label>
+          <select class="input" id="cfgControlBar">
+            <option value="top" data-i18n="barTop">Üst Sabit Çubuk</option>
+            <option value="hover" data-i18n="barHover">Yüzen (Üzerine Gelince)</option>
+            <option value="hidden" data-i18n="barHidden">Gizli (Saf Tam Ekran Oyun)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label data-i18n="lblUsername">Oyuncu Kullanıcı Adı (Username)</label>
+          <input type="text" class="input" id="cfgUsername" value="Oyuncu####">
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="toggle-row">
+          <div><strong data-i18n="togFlag">Yeşil Bayrak &amp; Durdur</strong></div>
+          <label class="switch"><input type="checkbox" id="cfgShowFlag" checked><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div><strong data-i18n="togPause">Duraklatma (Pause) Butonu</strong></div>
+          <label class="switch"><input type="checkbox" id="cfgShowPause" checked><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div><strong data-i18n="togFullscreen">Tam Ekran Butonu</strong></div>
+          <label class="switch"><input type="checkbox" id="cfgShowFullscreen" checked><span class="slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div><strong data-i18n="togFpsHud">Canlı FPS Sayacı</strong></div>
+          <label class="switch"><input type="checkbox" id="cfgShowFps"><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="sec-title"><span data-i18n="secLoadLaunch">Başlatma &amp; Yükleme Ekranı</span></div>
+      <div class="toggle-row">
+        <div><strong data-i18n="togAutoplay">Otomatik Başlat (Autoplay)</strong><small data-i18n="togAutoplayDesc">Kapalıysa tıklanabilir şık bir başlatma ekranı gösterir</small></div>
+        <label class="switch"><input type="checkbox" id="cfgAutoplay"><span class="slider"></span></label>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label data-i18n="lblLoadText">Yükleme Ekranı Metni</label>
+          <input type="text" class="input" id="cfgLoadText" value="Oyun Yükleniyor...">
+        </div>
+        <div class="field">
+          <label data-i18n="lblLoadLogo">Yükleme / Başlatma Logosu</label>
+          <div style="display:flex; gap:6px;">
+            <button class="btn" id="btnUploadLogo" style="flex:1">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              <span data-i18n="btnLogoPick">Logo / Kapak Seç</span>
+            </button>
+            <button class="btn" id="btnClearLogo" title="Temizle" data-i18n-title="clear">
+              <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+            </button>
+            <input type="file" id="logoFileInput" accept="image/*" hidden>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="sec-title"><span data-i18n="secCloud">Bulut Değişkenleri (Cloud Variables)</span></div>
+      <div class="grid-2">
+        <div class="field">
+          <label data-i18n="lblCloudMode">Bulut Sağlayıcısı</label>
+          <select class="input" id="cfgCloudMode">
+            <option value="local" data-i18n="cloudLocal">Yerel Tarayıcı Hafızası (Skor Kaydı İçin İdeal)</option>
+            <option value="turbowarp" data-i18n="cloudTw">TurboWarp Sunucusu (Online Çok Oyunculu)</option>
+            <option value="custom" data-i18n="cloudCustom">Özel WebSocket Sunucusu</option>
+            <option value="none" data-i18n="cloudNone">Kapalı</option>
+          </select>
+        </div>
+        <div class="field" id="cloudWsWrap" style="display:none;">
+          <label>WebSocket URL (wss://...)</label>
+          <input type="text" class="input" id="cfgCloudWs" value="wss://clouddata.turbowarp.org">
+        </div>
+        <div class="field" id="cloudIdWrap">
+          <label data-i18n="lblCloudId">Proje Oda Kimliği (Cloud ID)</label>
+          <input type="text" class="input" id="cfgCloudId" value="oyun-odasi-1">
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-mobile">
+      <div class="sec-title"><span data-i18n="secTouch">Mobil Sanal Dokunmatik Kontroller</span></div>
+      <div class="toggle-row">
+        <div><strong data-i18n="togTouch">Dokunmatik Kontrol Katmanını Göster</strong><small data-i18n="togTouchDesc">Telefon ve tabletlerde oyun içi sanal D-Pad ve A/B tuşları ekler</small></div>
+        <label class="switch"><input type="checkbox" id="cfgTouchControls"><span class="slider"></span></label>
+      </div>
+      <div class="grid-3">
+        <div class="field">
+          <label data-i18n="lblDpadMode">Yön Tuşları</label>
+          <select class="input" id="cfgDpadKeys">
+            <option value="arrows" data-i18n="dpadArrows">Ok Tuşları</option>
+            <option value="wasd">W A S D</option>
+          </select>
+        </div>
+        <div class="field">
+          <label data-i18n="lblBtnA">A Tuşu Eşlemesi</label>
+          <input type="text" class="input" id="cfgTouchA" value="Space">
+        </div>
+        <div class="field">
+          <label data-i18n="lblBtnB">B Tuşu Eşlemesi</label>
+          <input type="text" class="input" id="cfgTouchB" value="KeyZ">
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="sec-title"><span data-i18n="secExt">Özel TurboWarp Eklentileri &amp; Kod Enjeksiyonu</span></div>
+      <div class="toggle-row">
+        <div><strong data-i18n="togUnsandboxed">Korumasız Eklenti Modu (Unsandboxed)</strong><small data-i18n="togUnsandboxedDesc">Gelişmiş TurboWarp eklentilerinin (Fetch, Gamepad vb.) çalışması için önerilir</small></div>
+        <label class="switch"><input type="checkbox" id="cfgUnsandboxed" checked><span class="slider"></span></label>
+      </div>
+      <div class="field">
+        <label data-i18n="lblExtUrls">Ek Eklenti URL'leri (Her satıra bir URL)</label>
+        <textarea class="input" id="cfgExtensions" placeholder="https://extensions.turbowarp.org/..."></textarea>
+      </div>
+      <div class="grid-2">
+        <div class="field">
+          <label data-i18n="lblCustomCss">Özel CSS (İsteğe Bağlı)</label>
+          <textarea class="input" id="cfgCustomCss" placeholder="/* Özel stil kuralları */" data-i18n-placeholder="placeholderCustomCss"></textarea>
+        </div>
+        <div class="field">
+          <label data-i18n="lblCustomJs">Özel JS (İsteğe Bağlı)</label>
+          <textarea class="input" id="cfgCustomJs" placeholder="// Başlatma sonrası özel JS" data-i18n-placeholder="placeholderCustomJs"></textarea>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="sec-title"><span data-i18n="secEngineMgr">Çevrimdışı Motor Yönetimi (Scaffolding v0.4.0)</span></div>
+      <div class="toggle-row">
+        <div><strong data-i18n="togMusic">Müzik Eklentisi Seslerini Dahil Et (+2 MB)</strong><small data-i18n="togMusicDesc">Müzik eklentisinin internetsiz tam çalışması için sesleri içine gömer</small></div>
+        <label class="switch"><input type="checkbox" id="cfgWithMusic"><span class="slider"></span></label>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn" id="btnCacheEngine">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="btnCacheEngine">Motoru İnternetten Önbelleğe Al</span>
+        </button>
+        <button class="btn" id="btnLoadLocalEngine">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          <span data-i18n="btnLoadLocalEngine">Yerel Motor JS Dosyası Yükle</span>
+        </button>
+        <input type="file" id="engineFileInput" accept=".js" hidden>
+      </div>
+    </div>
+
+    <div class="tab-panel" id="panel-about">
+      <div class="dev-hero">
+        <div class="dev-avatar">AK</div>
+        <div>
+          <div style="font-size:12px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); font-weight:800;" data-i18n="aboutDevLabel">Geliştirici / Developer</div>
+          <h2 style="margin:2px 0 4px; font-size:19px;">Arif Kılıç &amp; Google AI Studio</h2>
+          <p style="margin:0; color:var(--muted); font-size:13px;" data-i18n="aboutDesc">Scratch ve TurboWarp (1920×1080 Full HD dahil) projelerini yerelde ve çevrimiçi olarak tek dosya HTML5 oyunlarına dönüştürmek için geliştirilmiş ücretsiz stüdyo.</p>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="sec-title"><span data-i18n="aboutLinksTitle">Resmi Bağlantılar &amp; Sosyal Medya</span></div>
+
+      <div class="social-grid">
+        <a class="social-card" href="https://antrikotveguller.itch.io/" target="_blank" rel="noopener noreferrer">
+          <div class="social-badge itch">
+            <svg class="ico-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M3.13 3.7C2.1 4.3 1.07 6.3 1.07 7.45v1.32c0 1.46 1.36 2.74 2.57 2.74 1.47 0 2.69-1.22 2.69-2.66 0 1.44 1.18 2.66 2.65 2.66 1.46 0 2.64-1.22 2.64-2.66 0 1.44 1.24 2.66 2.7 2.66 1.47 0 2.65-1.22 2.65-2.66 0 1.44 1.22 2.66 2.69 2.66 1.21 0 2.57-1.28 2.57-2.74V7.45c0-1.15-1.03-3.15-2.06-3.75-1.93-.21-5.6-.28-8.17-.28-2.57 0-6.24.07-8.17.28zm6.45 9.13c-.93 0-1.73-.44-2.25-1.09-.54.67-1.36 1.09-2.29 1.09-.56 0-1.08-.14-1.54-.38v7.15c0 .93.77 1.69 1.7 1.69h13.6c.93 0 1.7-.76 1.7-1.69v-7.15c-.46.24-.98.38-1.54.38-.93 0-1.75-.42-2.29-1.09-.52.65-1.32 1.09-2.25 1.09-.95 0-1.78-.45-2.3-1.13-.52.68-1.35 1.13-2.3 1.13zm-.47 2.27h2.15v1.96h1.48V15.1h2.15v2.92h-1.48v1.45h-2.82v-1.45H9.11V15.1z"/></svg>
+          </div>
+          <div>
+            <strong>itch.io</strong>
+            <span>antrikotveguller.itch.io</span>
+          </div>
+        </a>
+
+        <a class="social-card" href="https://www.instagram.com/antrikotveguller/" target="_blank" rel="noopener noreferrer">
+          <div class="social-badge ig">
+            <svg class="ico-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </div>
+          <div>
+            <strong>Instagram</strong>
+            <span>@antrikotveguller</span>
+          </div>
+        </a>
+
+        <a class="social-card" href="https://www.youtube.com/@AntrikotVeGuller" target="_blank" rel="noopener noreferrer">
+          <div class="social-badge yt">
+            <svg class="ico-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+          </div>
+          <div>
+            <strong>YouTube</strong>
+            <span>@AntrikotVeGuller</span>
+          </div>
+        </a>
+
+        <a class="social-card" href="https://github.com/antrikotveguller" target="_blank" rel="noopener noreferrer">
+          <div class="social-badge gh">
+            <svg class="ico-lg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.04c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12 12 0 0 0 12 .3z"/></svg>
+          </div>
+          <div>
+            <strong>GitHub</strong>
+            <span>github.com/antrikotveguller</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <aside class="sticky-col">
+    <div class="card">
+      <div class="browser-tab-mock">
+        <div class="win-dots"><i style="background:#ef4444"></i><i style="background:#f59e0b"></i><i style="background:#22c55e"></i></div>
+        <div class="tab-pill">
+          <img id="mockTabFavicon" alt="">
+          <span id="mockTabTitle">Benim Scratch Oyunum</span>
+        </div>
+        <div style="margin-left:auto; display:flex; gap:6px;">
+          <button class="btn btn-sm btn-primary" id="btnLiveTest">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+            <span data-i18n="btnLiveTest">Canlı Test Et</span>
+          </button>
+          <button class="btn btn-sm" id="btnFsTest" style="display:none;" title="Tam Ekran Önizleme" data-i18n-title="fsTest">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>
+          </button>
+          <button class="btn btn-sm" id="btnStopTest" style="display:none;" title="Testi Durdur" data-i18n-title="stopTest">
+            <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="preview-box" id="previewBox">
+        <div class="preview-placeholder" id="previewPlaceholder">
+          <div class="ratio-badge" id="previewRatioBadge">480 × 360</div>
+          <h3 style="margin:6px 0;" data-i18n="previewReadyTitle">Önizleme Alanı</h3>
+          <p style="margin:0; font-size:12.5px; opacity:0.8;" data-i18n="previewReadyDesc">Bir .sb3/.pmp projesi yükleyin ve "Canlı Test Et" butonuna basın.</p>
+        </div>
+        <iframe id="previewIframe" style="display:none;" allowfullscreen sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-modals"></iframe>
+      </div>
+
+      <div class="export-actions">
+        <div class="progress-wrap" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
+        <div class="status-log">
+          <span id="statusLog"></span>
+          <span id="estSizeLog" style="font-weight:600;"></span>
+        </div>
+
+        <button class="btn btn-primary" id="btnExportOffline" style="padding:12px;">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          <span data-i18n="btnExportOffline">Tek Dosya Çevrimdışı HTML İndir (Standalone)</span>
+        </button>
+
+        <div class="grid-2" style="gap:10px;">
+          <button class="btn" id="btnExportCdn">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            <span data-i18n="btnExportCdn">Hafif CDN HTML</span>
+          </button>
+          <button class="btn" id="btnExportZip">
+            <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+            <span data-i18n="btnExportZip">Web Paketi (.ZIP)</span>
+          </button>
+        </div>
+
+        <button class="btn" id="btnViewSource">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          <span data-i18n="btnViewSource">HTML Kaynak Kodunu Gör / Kopyala</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<footer class="studio-footer">
+  <div>
+    <span data-i18n="footerDev">Geliştirici:</span>
+    <strong style="color:var(--text);">Arif Kılıç &amp; Google AI Studio</strong>
+  </div>
+  <div class="footer-links">
+    <a class="footer-link" href="https://antrikotveguller.itch.io/" target="_blank" rel="noopener noreferrer">
+      <svg class="ico" style="color:#fa5c5c" viewBox="0 0 24 24" fill="currentColor"><path d="M3.13 3.7C2.1 4.3 1.07 6.3 1.07 7.45v1.32c0 1.46 1.36 2.74 2.57 2.74 1.47 0 2.69-1.22 2.69-2.66 0 1.44 1.18 2.66 2.65 2.66 1.46 0 2.64-1.22 2.64-2.66 0 1.44 1.24 2.66 2.7 2.66 1.47 0 2.65-1.22 2.65-2.66 0 1.44 1.22 2.66 2.69 2.66 1.21 0 2.57-1.28 2.57-2.74V7.45c0-1.15-1.03-3.15-2.06-3.75-1.93-.21-5.6-.28-8.17-.28-2.57 0-6.24.07-8.17.28zm6.45 9.13c-.93 0-1.73-.44-2.25-1.09-.54.67-1.36 1.09-2.29 1.09-.56 0-1.08-.14-1.54-.38v7.15c0 .93.77 1.69 1.7 1.69h13.6c.93 0 1.7-.76 1.7-1.69v-7.15c-.46.24-.98.38-1.54.38-.93 0-1.75-.42-2.29-1.09-.52.65-1.32 1.09-2.25 1.09-.95 0-1.78-.45-2.3-1.13-.52.68-1.35 1.13-2.3 1.13zm-.47 2.27h2.15v1.96h1.48V15.1h2.15v2.92h-1.48v1.45h-2.82v-1.45H9.11V15.1z"/></svg>
+      <span>itch.io</span>
+    </a>
+    <a class="footer-link" href="https://www.instagram.com/antrikotveguller/" target="_blank" rel="noopener noreferrer">
+      <svg class="ico" style="color:#e1306c" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      <span>Instagram</span>
+    </a>
+    <a class="footer-link" href="https://www.youtube.com/@AntrikotVeGuller" target="_blank" rel="noopener noreferrer">
+      <svg class="ico" style="color:#ff2b2b" viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2 31.4 31.4 0 0 0 0 12a31.4 31.4 0 0 0 .5 5.8 3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14A31.4 31.4 0 0 0 24 12a31.4 31.4 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+      <span>YouTube</span>
+    </a>
+    <a class="footer-link" href="https://github.com/antrikotveguller" target="_blank" rel="noopener noreferrer">
+      <svg class="ico" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.79 23.39c.6.11.82-.26.82-.58v-2.04c-3.34.73-4.04-1.61-4.04-1.61-.55-1.39-1.33-1.76-1.33-1.76-1.09-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.81 1.3 3.5 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.13-.3-.54-1.52.12-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6 0c2.28-1.55 3.29-1.23 3.29-1.23.66 1.66.25 2.88.12 3.18.77.84 1.24 1.91 1.24 3.22 0 4.61-2.81 5.63-5.48 5.92.43.37.81 1.1.81 2.22v3.29c0 .32.22.7.82.58A12 12 0 0 0 12 .3z"/></svg>
+      <span>GitHub</span>
+    </a>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="codeModal">
+  <div class="modal">
+    <div class="modal-head">
+      <strong data-i18n="modalCodeTitle">Üretilen HTML Kaynak Kodu</strong>
+      <div style="display:flex; gap:8px;">
+        <button class="btn btn-sm btn-primary" id="btnCopyCode" data-i18n="btnCopy">Kopyala</button>
+        <button class="btn btn-sm" id="btnCloseModal" aria-label="Close">
+          <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body">
+      <textarea class="code-view" id="codeViewArea" readonly></textarea>
+    </div>
+  </div>
+</div>
+
+<div id="toast-wrap"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  const I18N = {
+    tr: {
+      appTitle: "Scratch & TurboWarp → HTML Studio",
+      appSubtitle: "Yerel ve Online • 1920×1080 Full HD • Çevrimdışı Paketleyici",
+      tabProject: "Proje & Analiz", tabAppearance: "Favicon & Görünüm", tabStage: "Sahne & 1920×1080",
+      tabEngine: "TurboWarp Motoru", tabControls: "Kontroller & Bulut", tabMobile: "Mobil & Gelişmiş", tabAbout: "Hakkında",
+      dropTitle: "Scratch / TurboWarp Projesini Buraya Sürükleyin",
+      dropDesc: ".sb3, .sb2, .sb veya .pmp dosyaları desteklenir (Tamamen cihazınızda işlenir)",
+      loadFromIdTitle: "Veya Scratch Proje ID / URL ile Yükle (Online)",
+      remotePlaceholder: "Örn: 10128407 veya https://scratch.mit.edu/projects/...",
+      btnLoad: "Yükle",
+      remoteHint: "Not: Paylaşılmamış (unshared) projeler için bilgisayardan .sb3 dosyası yükleyin.",
+      applyTwSettings: "TurboWarp Ayarlarını Uygula",
+      statStage: "Sahne", statSprites: "Kukla", statAssets: "Kostüm/Ses",
+      lblPageTitle: "Sayfa Başlığı (<title>)", lblMetaDesc: "Sayfa Açıklaması (Meta Description)",
+      defaultTitle: "Benim Scratch Oyunum", defaultDesc: "TurboWarp & Scratch HTML5 Oyunu",
+      defaultUsername: "Oyuncu####", defaultLoadText: "Oyun Yükleniyor...", defaultCloudId: "oyun-odasi-1",
+      secFavicon: "Favicon (Tarayıcı Sekme İkonu)", btnUploadFav: "Resim Seç (.png/.ico/.svg)", btnGenFav: "Harf/Sembolden Üret",
+      lblFavChar: "Harf veya Sembol", lblFavBg: "İkon Arka Planı", lblAccentColor: "Vurgu Rengi (Accent)",
+      secBackground: "Arka Plan & İmleç", lblBgType: "Arka Plan Tipi", optSolid: "Düz Renk", optGradient: "Gradyan (Geçişli)", optImage: "Özel Görsel",
+      lblBgColor1: "Arka Plan Rengi", lblBgColor2: "İkinci Renk (Gradyan)", lblBgImg: "Arka Plan Resmi Yükle",
+      btnChooseImage: "Görsel Seç", btnChooseCursor: "İmleç Seç", btnLogoPick: "Logo / Kapak Seç",
+      lblCursor: "Fare İmleci (Cursor)", curAuto: "Varsayılan", curNone: "Gizli (FPS / Nişancı)",
+      curCross: "Nişangah (Crosshair)", curPointer: "El İşareti", curCustom: "Özel İmleç Resmi", lblCustomCursor: "Özel İmleç (.png/.cur, max 64px)",
+      secResPresets: "Hızlı Çözünürlük Önayarları (TurboWarp & Scratch)",
+      presetClassic: "480×360 (Klasik Scratch)", presetWide: "640×360 (Geniş Scratch)", presetVertical: "1080×1920 (Dikey 9:16)",
+      lblWidth: "Sahne Genişliği (px)", lblHeight: "Sahne Yüksekliği (px)",
+      lblResizeMode: "Ekrana Ölçekleme Modu", resPreserve: "En-Boy Oranını Koru (Önerilen)",
+      resStretch: "Ekrana Tam Uzat (Stretch)", resDynamic: "Dinamik Boyutlandır", lblMaxTex: "Maksimum Doku Boyutu (HD Kalite)",
+      texStandard: "2048 px (Standart)", texRecommended: "4096 px (1920×1080 İçin Önerilen)", texUltra: "8192 px (Ultra 4K/8K)",
+      lblFps: "Kare Hızı (FPS) — 0 = VSync", lblMaxClones: "Maksimum Klon (İkiz) Sayısı",
+      clonesClassic: "300 (Klasik Scratch)", clonesUnlimited: "Sınırsız (TurboWarp)",
+      togCompiler: "TurboWarp Derleyici (Compiler)", togCompilerDesc: "Projeleri JavaScript'e derleyerek 10-100x daha hızlı çalıştırır",
+      togInterp: "Ara Kare Yumuşatma (Interpolation)", togInterpDesc: "30 FPS blokları bile yüksek Hz monitörlerde akıcı gösterir",
+      togHqPen: "Yüksek Kaliteli Kalem (High Quality Pen)", togHqPenDesc: "Kalem çizimlerini ekran çözünürlüğünde (1920×1080) keskin çizer",
+      togTurbo: "Turbo Mod", togTurboDesc: "Döngüleri ekran yenilemesini beklemeden olabildiğince hızlı yürütür",
+      togFencing: "Kukla Ekran Sınırlarını Kaldır (Disable Fencing)", togFencingDesc: "Kuklaların ekran dışına tamamen çıkabilmesine izin verir",
+      togMisc: "Çeşitli Sınırları Kaldır (Remove Misc Limits)", togMiscDesc: "Ses efekti, kalem boyutu ve liste uzunluğu sınırlarını kaldırır",
+      togWarp: "Warp Zamanlayıcı (Donma Koruması)", togWarpDesc: "Ekransız özel bloklarda sonsuz döngü olursa tarayıcıyı dondurmaz",
+      lblCtrlBar: "Kontrol Çubuğu Modu", barTop: "Üst Sabit Çubuk", barHover: "Yüzen (Üzerine Gelince)", barHidden: "Gizli (Saf Tam Ekran Oyun)",
+      lblUsername: "Oyuncu Kullanıcı Adı (Username)", togFlag: "Yeşil Bayrak & Durdur", togPause: "Duraklatma (Pause) Butonu",
+      togFullscreen: "Tam Ekran Butonu", togFpsHud: "Canlı FPS Sayacı",
+      secLoadLaunch: "Başlatma & Yükleme Ekranı", togAutoplay: "Otomatik Başlat (Autoplay)", togAutoplayDesc: "Kapalıysa tıklanabilir şık bir başlatma ekranı gösterir",
+      lblLoadText: "Yükleme Ekranı Metni", lblLoadLogo: "Yükleme / Başlatma Logosu",
+      secCloud: "Bulut Değişkenleri (Cloud Variables)", lblCloudMode: "Bulut Sağlayıcısı",
+      cloudLocal: "Yerel Tarayıcı Hafızası (Skor Kaydı İçin İdeal)", cloudTw: "TurboWarp Sunucusu (Online Çok Oyunculu)",
+      cloudCustom: "Özel WebSocket Sunucusu", cloudNone: "Kapalı", lblCloudId: "Proje Oda Kimliği (Cloud ID)",
+      secTouch: "Mobil Sanal Dokunmatik Kontroller", togTouch: "Dokunmatik Kontrol Katmanını Göster",
+      togTouchDesc: "Telefon ve tabletlerde oyun içi sanal D-Pad ve A/B tuşları ekler",
+      lblDpadMode: "Yön Tuşları", dpadArrows: "Ok Tuşları", lblBtnA: "A Tuşu Eşlemesi", lblBtnB: "B Tuşu Eşlemesi",
+      secExt: "Özel TurboWarp Eklentileri & Kod Enjeksiyonu", togUnsandboxed: "Korumasız Eklenti Modu (Unsandboxed)",
+      togUnsandboxedDesc: "Gelişmiş TurboWarp eklentilerinin çalışması için önerilir", lblExtUrls: "Ek Eklenti URL'leri (Her satıra bir URL)",
+      lblCustomCss: "Özel CSS (İsteğe Bağlı)", lblCustomJs: "Özel JS (İsteğe Bağlı)",
+      placeholderCustomCss: "/* Özel stil kuralları */", placeholderCustomJs: "// Başlatma sonrası özel JS",
+      secEngineMgr: "Çevrimdışı Motor Yönetimi (Scaffolding v0.4.0)",
+      togMusic: "Müzik Eklentisi Seslerini Dahil Et (+2 MB)", togMusicDesc: "Müzik eklentisinin internetsiz tam çalışması için sesleri içine gömer",
+      btnCacheEngine: "Motoru İnternetten Önbelleğe Al", btnLoadLocalEngine: "Yerel Motor JS Dosyası Yükle",
+      aboutDevLabel: "Geliştirici / Developer",
+      aboutDesc: "Scratch ve TurboWarp (1920×1080 Full HD dahil) projelerini yerelde ve çevrimiçi olarak tek dosya HTML5 oyunlarına dönüştürmek için geliştirilmiş ücretsiz stüdyo.",
+      aboutLinksTitle: "Resmi Bağlantılar & Sosyal Medya",
+      footerDev: "Geliştirici:",
+      btnLiveTest: "Canlı Test Et", previewReadyTitle: "Önizleme Alanı",
+      previewReadyDesc: "Bir .sb3/.pmp projesi yükleyin ve \"Canlı Test Et\" butonuna basın.",
+      btnExportOffline: "Tek Dosya Çevrimdışı HTML İndir (Standalone)", btnExportCdn: "Hafif CDN HTML",
+      btnExportZip: "Web Paketi (.ZIP)", btnViewSource: "HTML Kaynak Kodunu Gör / Kopyala",
+      modalCodeTitle: "Üretilen HTML Kaynak Kodu", btnCopy: "Kopyala", btnCopied: "Kopyalandı!",
+      msgNoProject: "Lütfen önce bir .sb3 / .pmp projesi yükleyin!",
+      msgEngineCached: "Çevrimdışı Motor Hazır", msgEngineOnline: "Online Mod (CDN)",
+      msgDownloadingEngine: "TurboWarp motoru indiriliyor...", msgBuilding: "HTML paketi oluşturuluyor...", msgDone: "Hazır! İndirme başlatıldı.",
+      msgTwApplied: "TurboWarp proje ayarları uygulandı!", msgConfigLoaded: "Ayarlar JSON dosyasından yüklendi.",
+      msgLocalEngineSaved: "Yerel motor önbelleğe kaydedildi!", msgAnalyzing: "Proje analiz ediliyor...", msgReadyPrefix: "Hazır: ",
+      msgDownloadingFile: "Dosya indiriliyor...", msgQueryingApi: "Scratch API sorgulanıyor...",
+      msgDownloadingPj: "project.json indiriliyor...", msgDownloadingAssets: "Varlıklar indiriliyor", msgPreparingTest: "Canlı test hazırlanıyor...",
+      errInvalidProjectId: "Geçerli Scratch Proje ID bulunamadı", errProjectNotFound: "Proje bulunamadı veya paylaşılmamış",
+      errPjFailed: "project.json alınamadı", errLoadPrefix: "Yükleme Hatası: ", errEngineDownload: "Motor indirilemedi: ",
+      errGeneric: "Hata: ", errZip: "ZIP Hatası: ", errPreview: "Önizleme Hatası: ",
+      gamePlayBtn: "OYNA", gameStartTitle: "Başlat", gameStopTitle: "Durdur", gamePauseTitle: "Duraklat", gameFsTitle: "Tam Ekran",
+      themeDark: "Tema: Turbo Koyu", themeLight: "Tema: Aydınlık", themeCyberpunk: "Tema: Siberpunk",
+      themeOcean: "Tema: Okyanus", themeEmerald: "Tema: Zümrüt", themeRetro: "Tema: Retro",
+      clear: "Temizle", stopTest: "Testi Durdur", fsTest: "Tam Ekran Önizleme",
+      exportCfgTitle: "Ayarları JSON İndir", importCfgTitle: "Ayarları JSON Yükle", extensionsLabel: "Eklentiler:"
+    },
+    en: {
+      appTitle: "Scratch & TurboWarp → HTML Studio",
+      appSubtitle: "Local & Online • 1920×1080 Full HD • Offline Packager",
+      tabProject: "Project & Inspect", tabAppearance: "Favicon & Style", tabStage: "Stage & 1920×1080",
+      tabEngine: "TurboWarp Engine", tabControls: "Controls & Cloud", tabMobile: "Mobile & Advanced", tabAbout: "About",
+      dropTitle: "Drop Scratch / TurboWarp Project Here",
+      dropDesc: "Supports .sb3, .sb2, .sb, or .pmp files (Processed 100% locally)",
+      loadFromIdTitle: "Or Load via Scratch Project ID / URL (Online)",
+      remotePlaceholder: "e.g. 10128407 or https://scratch.mit.edu/projects/...",
+      btnLoad: "Load",
+      remoteHint: "Note: For unshared projects, upload the .sb3 file from your computer.",
+      applyTwSettings: "Apply TurboWarp Settings",
+      statStage: "Stage", statSprites: "Sprites", statAssets: "Assets",
+      lblPageTitle: "Page Title (<title>)", lblMetaDesc: "Meta Description",
+      defaultTitle: "My Scratch Game", defaultDesc: "TurboWarp & Scratch HTML5 Game",
+      defaultUsername: "Player####", defaultLoadText: "Loading Game...", defaultCloudId: "game-room-1",
+      secFavicon: "Favicon (Browser Tab Icon)", btnUploadFav: "Choose Image", btnGenFav: "Generate from Text",
+      lblFavChar: "Letter or Symbol", lblFavBg: "Icon Background", lblAccentColor: "Accent Color",
+      secBackground: "Background & Cursor", lblBgType: "Background Type",
+      optSolid: "Solid Color", optGradient: "Gradient", optImage: "Custom Image",
+      lblBgColor1: "Background Color", lblBgColor2: "Second Gradient Color", lblBgImg: "Upload Background Image",
+      btnChooseImage: "Choose Image", btnChooseCursor: "Choose Cursor", btnLogoPick: "Choose Logo / Cover",
+      lblCursor: "Mouse Cursor", curAuto: "Default", curNone: "Hidden (FPS/Shooter)",
+      curCross: "Crosshair", curPointer: "Pointer", curCustom: "Custom Cursor Image", lblCustomCursor: "Custom Cursor (.png/.cur, max 64px)",
+      secResPresets: "Quick Resolution Presets (TurboWarp & Scratch)",
+      presetClassic: "480×360 (Classic Scratch)", presetWide: "640×360 (Wide Scratch)", presetVertical: "1080×1920 (Vertical 9:16)",
+      lblWidth: "Stage Width (px)", lblHeight: "Stage Height (px)",
+      lblResizeMode: "Resize Mode", resPreserve: "Preserve Aspect Ratio (Recommended)",
+      resStretch: "Stretch to Fill", resDynamic: "Dynamic Resize", lblMaxTex: "Max Texture Dimension (HD Quality)",
+      texStandard: "2048 px (Standard)", texRecommended: "4096 px (Recommended for 1920×1080)", texUltra: "8192 px (Ultra 4K/8K)",
+      lblFps: "Framerate (FPS) — 0 = VSync", lblMaxClones: "Max Clones",
+      clonesClassic: "300 (Classic Scratch)", clonesUnlimited: "Unlimited (TurboWarp)",
+      togCompiler: "TurboWarp Compiler", togCompilerDesc: "Compiles scripts to JS for 10-100x faster execution",
+      togInterp: "Interpolation", togInterpDesc: "Smooths motion at high refresh rates",
+      togHqPen: "High Quality Pen", togHqPenDesc: "Renders pen strokes at full native resolution",
+      togTurbo: "Turbo Mode", togTurboDesc: "Runs loops as fast as possible",
+      togFencing: "Disable Sprite Fencing", togFencingDesc: "Allows sprites to move completely offscreen",
+      togMisc: "Remove Misc Limits", togMiscDesc: "Removes pen, sound, and list limits",
+      togWarp: "Warp Timer", togWarpDesc: "Prevents browser freezes in infinite warp loops",
+      lblCtrlBar: "Control Bar Mode", barTop: "Top Bar", barHover: "Floating (Hover)", barHidden: "Hidden (Pure Game)",
+      lblUsername: "Player Username", togFlag: "Green Flag & Stop", togPause: "Pause Button",
+      togFullscreen: "Fullscreen Button", togFpsHud: "Live FPS Counter",
+      secLoadLaunch: "Launch & Loading Screen", togAutoplay: "Autoplay", togAutoplayDesc: "Shows a sleek click-to-start screen when disabled",
+      lblLoadText: "Loading Text", lblLoadLogo: "Loading / Cover Logo",
+      secCloud: "Cloud Variables", lblCloudMode: "Cloud Provider",
+      cloudLocal: "LocalStorage (Best for Offline Highscores)", cloudTw: "TurboWarp Cloud Server",
+      cloudCustom: "Custom WebSocket Server", cloudNone: "Disabled", lblCloudId: "Cloud Room ID",
+      secTouch: "Mobile Virtual Touch Controls", togTouch: "Enable Touch Controls Overlay",
+      togTouchDesc: "Adds virtual D-Pad and A/B buttons for phones & tablets",
+      lblDpadMode: "D-Pad Keys", dpadArrows: "Arrow Keys", lblBtnA: "A Button Key", lblBtnB: "B Button Key",
+      secExt: "Custom Extensions & Code Injection", togUnsandboxed: "Unsandboxed Extensions",
+      togUnsandboxedDesc: "Recommended for advanced TurboWarp extensions", lblExtUrls: "Extra Extension URLs (one per line)",
+      lblCustomCss: "Custom CSS", lblCustomJs: "Custom JS",
+      placeholderCustomCss: "/* Custom CSS rules */", placeholderCustomJs: "// Custom JS after initialization",
+      secEngineMgr: "Offline Engine Manager (Scaffolding v0.4.0)",
+      togMusic: "Include Music Extension Sounds (+2 MB)", togMusicDesc: "Embeds instrument sounds for offline Music extension",
+      btnCacheEngine: "Cache Engine from Internet", btnLoadLocalEngine: "Load Local Engine JS",
+      aboutDevLabel: "Developer",
+      aboutDesc: "Advanced studio built to convert Scratch and TurboWarp projects (including 1920×1080 Full HD) into standalone HTML5 games locally or online.",
+      aboutLinksTitle: "Official Links & Social Media",
+      footerDev: "Developer:",
+      btnLiveTest: "Live Test", previewReadyTitle: "Preview Area",
+      previewReadyDesc: "Load a .sb3/.pmp project and click \"Live Test\".",
+      btnExportOffline: "Download Standalone Offline HTML", btnExportCdn: "Lightweight CDN HTML",
+      btnExportZip: "Web Package (.ZIP)", btnViewSource: "View / Copy HTML Source",
+      modalCodeTitle: "Generated HTML Source", btnCopy: "Copy", btnCopied: "Copied!",
+      msgNoProject: "Please load a .sb3 / .pmp project first!",
+      msgEngineCached: "Offline Engine Ready", msgEngineOnline: "Online Mode (CDN)",
+      msgDownloadingEngine: "Downloading TurboWarp engine...", msgBuilding: "Building HTML package...", msgDone: "Done! Download started.",
+      msgTwApplied: "TurboWarp project settings applied!", msgConfigLoaded: "Settings loaded from JSON.",
+      msgLocalEngineSaved: "Local engine cached successfully!", msgAnalyzing: "Analyzing project...", msgReadyPrefix: "Ready: ",
+      msgDownloadingFile: "Downloading file...", msgQueryingApi: "Querying Scratch API...",
+      msgDownloadingPj: "Downloading project.json...", msgDownloadingAssets: "Downloading assets", msgPreparingTest: "Preparing live test...",
+      errInvalidProjectId: "Valid Scratch Project ID not found", errProjectNotFound: "Project not found or unshared",
+      errPjFailed: "Failed to fetch project.json", errLoadPrefix: "Load Error: ", errEngineDownload: "Failed to download engine: ",
+      errGeneric: "Error: ", errZip: "ZIP Error: ", errPreview: "Preview Error: ",
+      gamePlayBtn: "PLAY", gameStartTitle: "Start", gameStopTitle: "Stop", gamePauseTitle: "Pause", gameFsTitle: "Fullscreen",
+      themeDark: "Theme: Turbo Dark", themeLight: "Theme: Light", themeCyberpunk: "Theme: Cyberpunk",
+      themeOcean: "Theme: Ocean", themeEmerald: "Theme: Emerald", themeRetro: "Theme: Retro",
+      clear: "Clear", stopTest: "Stop Test", fsTest: "Fullscreen Preview",
+      exportCfgTitle: "Download Settings JSON", importCfgTitle: "Import Settings JSON", extensionsLabel: "Extensions:"
+    },
+    de: {
+      appTitle: "Scratch & TurboWarp → HTML Studio",
+      appSubtitle: "Lokal & Online • 1920×1080 Full HD • Offline-Packager",
+      tabProject: "Projekt & Analyse", tabAppearance: "Favicon & Design", tabStage: "Bühne & 1920×1080",
+      tabEngine: "TurboWarp Engine", tabControls: "Steuerung & Cloud", tabMobile: "Mobil & Erweitert", tabAbout: "Über",
+      dropTitle: "Scratch / TurboWarp Projekt hierher ziehen",
+      dropDesc: "Unterstützt .sb3, .sb2, .sb und .pmp Dateien (100% lokal)",
+      loadFromIdTitle: "Oder über Scratch Projekt-ID / URL laden",
+      remotePlaceholder: "z. B. 10128407 oder https://scratch.mit.edu/projects/...",
+      btnLoad: "Laden",
+      remoteHint: "Hinweis: Für nicht geteilte Projekte .sb3 lokal hochladen.",
+      applyTwSettings: "TurboWarp-Einstellungen anwenden",
+      statStage: "Bühne", statSprites: "Figuren", statAssets: "Medien",
+      lblPageTitle: "Seitentitel (<title>)", lblMetaDesc: "Meta-Beschreibung",
+      defaultTitle: "Mein Scratch Spiel", defaultDesc: "TurboWarp & Scratch HTML5 Spiel",
+      defaultUsername: "Spieler####", defaultLoadText: "Spiel wird geladen...", defaultCloudId: "spiel-raum-1",
+      secFavicon: "Favicon (Tab-Symbol)", btnUploadFav: "Bild wählen", btnGenFav: "Aus Text erstellen",
+      lblFavChar: "Buchstabe / Symbol", lblFavBg: "Hintergrund", lblAccentColor: "Akzentfarbe",
+      secBackground: "Hintergrund & Cursor", lblBgType: "Hintergrundtyp", optSolid: "Einfarbig", optGradient: "Verlauf", optImage: "Eigenes Bild",
+      lblBgColor1: "Farbe 1", lblBgColor2: "Farbe 2", lblBgImg: "Hintergrundbild",
+      btnChooseImage: "Bild wählen", btnChooseCursor: "Cursor wählen", btnLogoPick: "Logo / Cover wählen",
+      lblCursor: "Mauszeiger", curAuto: "Standard", curNone: "Versteckt", curCross: "Fadenkreuz", curPointer: "Zeiger", curCustom: "Eigenes Bild", lblCustomCursor: "Eigenes Cursor-Bild",
+      secResPresets: "Auflösungs-Vorlagen",
+      presetClassic: "480×360 (Klassisch Scratch)", presetWide: "640×360 (Breitbild Scratch)", presetVertical: "1080×1920 (Vertikal 9:16)",
+      lblWidth: "Breite (px)", lblHeight: "Höhe (px)",
+      lblResizeMode: "Skalierung", resPreserve: "Seitenverhältnis beibehalten", resStretch: "Strecken", resDynamic: "Dynamisch", lblMaxTex: "Max. Texturgröße",
+      texStandard: "2048 px (Standard)", texRecommended: "4096 px (Empfohlen für 1920×1080)", texUltra: "8192 px (Ultra 4K/8K)",
+      lblFps: "Bildrate (FPS) — 0 = VSync", lblMaxClones: "Max. Klone",
+      clonesClassic: "300 (Klassisch Scratch)", clonesUnlimited: "Unbegrenzt (TurboWarp)",
+      togCompiler: "TurboWarp Compiler", togCompilerDesc: "Kompiliert Skripte zu JS",
+      togInterp: "Interpolation", togInterpDesc: "Flüssige Bewegung bei hohen Hz",
+      togHqPen: "HD-Stift", togHqPenDesc: "Scharfe Linien bei 1920×1080",
+      togTurbo: "Turbo-Modus", togTurboDesc: "Maximale Schleifengeschwindigkeit",
+      togFencing: "Fencing deaktivieren", togFencingDesc: "Figuren dürfen den Rand verlassen",
+      togMisc: "Limits entfernen", togMiscDesc: "Entfernt Listen- und Soundlimits",
+      togWarp: "Warp-Timer", togWarpDesc: "Schützt vor Endlosschleifen",
+      lblCtrlBar: "Steuerleiste", barTop: "Oben", barHover: "Schwebend", barHidden: "Versteckt",
+      lblUsername: "Benutzername", togFlag: "Grüne Flagge & Stopp", togPause: "Pause-Taste", togFullscreen: "Vollbild-Taste", togFpsHud: "FPS-Anzeige",
+      secLoadLaunch: "Start- & Ladebildschirm", togAutoplay: "Autoplay", togAutoplayDesc: "Zeigt Startbutton wenn deaktiviert",
+      lblLoadText: "Ladetext", lblLoadLogo: "Lade-Logo",
+      secCloud: "Cloud-Variablen", lblCloudMode: "Cloud-Anbieter", cloudLocal: "Lokal (LocalStorage)", cloudTw: "TurboWarp Server", cloudCustom: "Eigener WebSocket", cloudNone: "Aus", lblCloudId: "Raum-ID",
+      secTouch: "Mobile Touch-Steuerung", togTouch: "Touch-Overlay aktivieren", togTouchDesc: "Virtuelles D-Pad & A/B Tasten",
+      lblDpadMode: "Steuerkreuz", dpadArrows: "Pfeiltasten", lblBtnA: "A-Taste", lblBtnB: "B-Taste",
+      secExt: "Erweiterungen & Code", togUnsandboxed: "Unsandboxed-Modus", togUnsandboxedDesc: "Für erweiterte TurboWarp-Extensions",
+      lblExtUrls: "Erweiterungs-URLs", lblCustomCss: "Eigenes CSS", lblCustomJs: "Eigenes JS",
+      placeholderCustomCss: "/* Eigenes CSS */", placeholderCustomJs: "// Eigenes JS nach dem Start",
+      secEngineMgr: "Offline-Engine-Manager", togMusic: "Musik-Sounds einbetten (+2 MB)", togMusicDesc: "Für Offline-Musik-Extension",
+      btnCacheEngine: "Engine herunterladen", btnLoadLocalEngine: "Lokale JS-Engine laden",
+      aboutDevLabel: "Entwickler", aboutDesc: "Studio zum Konvertieren von Scratch- und TurboWarp-Projekten (inkl. 1920×1080) in HTML5-Spiele.",
+      aboutLinksTitle: "Offizielle Links & Social Media", footerDev: "Entwickler:",
+      btnLiveTest: "Live-Test", previewReadyTitle: "Vorschau", previewReadyDesc: "Projekt laden und Live-Test starten.",
+      btnExportOffline: "Offline HTML herunterladen (Standalone)", btnExportCdn: "Leichtes CDN HTML",
+      btnExportZip: "Web-Paket (.ZIP)", btnViewSource: "HTML-Code anzeigen",
+      modalCodeTitle: "Generierter HTML-Code", btnCopy: "Kopieren", btnCopied: "Kopiert!",
+      msgNoProject: "Bitte zuerst ein .sb3 / .pmp Projekt laden!", msgEngineCached: "Offline-Engine Bereit", msgEngineOnline: "Online-Modus (CDN)",
+      msgDownloadingEngine: "Engine wird geladen...", msgBuilding: "HTML wird erstellt...", msgDone: "Fertig! Download gestartet.",
+      msgTwApplied: "TurboWarp-Einstellungen angewendet!", msgConfigLoaded: "Einstellungen geladen.",
+      msgLocalEngineSaved: "Lokale Engine gespeichert!", msgAnalyzing: "Projekt wird analysiert...", msgReadyPrefix: "Bereit: ",
+      msgDownloadingFile: "Datei wird heruntergeladen...", msgQueryingApi: "Scratch-API wird abgefragt...",
+      msgDownloadingPj: "project.json wird geladen...", msgDownloadingAssets: "Ressourcen werden geladen", msgPreparingTest: "Live-Test wird vorbereitet...",
+      errInvalidProjectId: "Keine gültige Scratch Projekt-ID gefunden", errProjectNotFound: "Projekt nicht gefunden oder nicht geteilt",
+      errPjFailed: "project.json konnte nicht geladen werden", errLoadPrefix: "Ladefehler: ", errEngineDownload: "Engine-Download fehlgeschlagen: ",
+      errGeneric: "Fehler: ", errZip: "ZIP-Fehler: ", errPreview: "Vorschaufehler: ",
+      gamePlayBtn: "SPIELEN", gameStartTitle: "Start", gameStopTitle: "Stopp", gamePauseTitle: "Pause", gameFsTitle: "Vollbild",
+      themeDark: "Design: Turbo Dunkel", themeLight: "Design: Hell", themeCyberpunk: "Design: Cyberpunk",
+      themeOcean: "Design: Ozean", themeEmerald: "Design: Smaragd", themeRetro: "Design: Retro",
+      clear: "Leeren", stopTest: "Test stoppen", fsTest: "Vollbild-Vorschau",
+      exportCfgTitle: "Einstellungen als JSON speichern", importCfgTitle: "Einstellungen aus JSON laden", extensionsLabel: "Erweiterungen:"
+    },
+    es: {
+      appTitle: "Scratch & TurboWarp → HTML Studio",
+      appSubtitle: "Local y Online • 1920×1080 Full HD • Empaquetador Offline",
+      tabProject: "Proyecto", tabAppearance: "Favicon y Estilo", tabStage: "Escenario 1920×1080",
+      tabEngine: "Motor TurboWarp", tabControls: "Controles y Nube", tabMobile: "Móvil y Avanzado", tabAbout: "Acerca de",
+      dropTitle: "Arrastra tu proyecto Scratch / TurboWarp aquí",
+      dropDesc: "Compatible con .sb3, .sb2, .sb y .pmp (100% local)",
+      loadFromIdTitle: "O cargar mediante ID / URL de Scratch",
+      remotePlaceholder: "Ej: 10128407 o https://scratch.mit.edu/projects/...",
+      btnLoad: "Cargar",
+      remoteHint: "Nota: Para proyectos no compartidos, sube el archivo .sb3.",
+      applyTwSettings: "Aplicar ajustes de TurboWarp",
+      statStage: "Escenario", statSprites: "Objetos", statAssets: "Recursos",
+      lblPageTitle: "Título (<title>)", lblMetaDesc: "Descripción Meta",
+      defaultTitle: "Mi Juego de Scratch", defaultDesc: "Juego HTML5 de TurboWarp & Scratch",
+      defaultUsername: "Jugador####", defaultLoadText: "Cargando juego...", defaultCloudId: "sala-juego-1",
+      secFavicon: "Favicon", btnUploadFav: "Elegir imagen", btnGenFav: "Generar desde texto",
+      lblFavChar: "Letra o Símbolo", lblFavBg: "Fondo", lblAccentColor: "Color de acento",
+      secBackground: "Fondo y Cursor", lblBgType: "Tipo de fondo", optSolid: "Sólido", optGradient: "Degradado", optImage: "Imagen",
+      lblBgColor1: "Color 1", lblBgColor2: "Color 2", lblBgImg: "Subir imagen",
+      btnChooseImage: "Elegir imagen", btnChooseCursor: "Elegir cursor", btnLogoPick: "Elegir Logo",
+      lblCursor: "Cursor", curAuto: "Por defecto", curNone: "Oculto", curCross: "Mira", curPointer: "Puntero", curCustom: "Personalizado", lblCustomCursor: "Imagen de cursor",
+      secResPresets: "Resoluciones rápidas",
+      presetClassic: "480×360 (Scratch Clásico)", presetWide: "640×360 (Scratch Ancho)", presetVertical: "1080×1920 (Vertical 9:16)",
+      lblWidth: "Ancho (px)", lblHeight: "Alto (px)",
+      lblResizeMode: "Escalado", resPreserve: "Mantener proporción", resStretch: "Estirar", resDynamic: "Dinámico", lblMaxTex: "Textura máxima",
+      texStandard: "2048 px (Estándar)", texRecommended: "4096 px (Recomendado 1920×1080)", texUltra: "8192 px (Ultra 4K/8K)",
+      lblFps: "FPS — 0 = VSync", lblMaxClones: "Clones máximos",
+      clonesClassic: "300 (Scratch Clásico)", clonesUnlimited: "Ilimitado (TurboWarp)",
+      togCompiler: "Compilador TurboWarp", togCompilerDesc: "Compila a JS para máxima velocidad",
+      togInterp: "Interpolación", togInterpDesc: "Movimiento fluido",
+      togHqPen: "Lápiz HD", togHqPenDesc: "Trazos nítidos en 1920×1080",
+      togTurbo: "Modo Turbo", togTurboDesc: "Bucles a máxima velocidad",
+      togFencing: "Desactivar bordes", togFencingDesc: "Permite salir de la pantalla",
+      togMisc: "Quitar límites", togMiscDesc: "Sin límites de listas o sonido",
+      togWarp: "Temporizador Warp", togWarpDesc: "Evita bloqueos del navegador",
+      lblCtrlBar: "Barra de controles", barTop: "Superior", barHover: "Flotante", barHidden: "Oculta",
+      lblUsername: "Nombre de usuario", togFlag: "Bandera y Detener", togPause: "Botón Pausa", togFullscreen: "Pantalla completa", togFpsHud: "Contador FPS",
+      secLoadLaunch: "Pantalla de inicio y carga", togAutoplay: "Autoplay", togAutoplayDesc: "Muestra botón de inicio si está desactivado",
+      lblLoadText: "Texto de carga", lblLoadLogo: "Logo",
+      secCloud: "Variables en la nube", lblCloudMode: "Proveedor", cloudLocal: "LocalStorage", cloudTw: "Servidor TurboWarp", cloudCustom: "WebSocket personalizado", cloudNone: "Desactivado", lblCloudId: "ID de sala",
+      secTouch: "Controles táctiles móviles", togTouch: "Activar controles táctiles", togTouchDesc: "D-Pad virtual y botones A/B",
+      lblDpadMode: "Teclas D-Pad", dpadArrows: "Teclas de flecha", lblBtnA: "Botón A", lblBtnB: "Botón B",
+      secExt: "Extensiones y Código", togUnsandboxed: "Modo Unsandboxed", togUnsandboxedDesc: "Para extensiones avanzadas",
+      lblExtUrls: "URLs de extensiones", lblCustomCss: "CSS personalizado", lblCustomJs: "JS personalizado",
+      placeholderCustomCss: "/* Reglas CSS personalizadas */", placeholderCustomJs: "// JS personalizado tras iniciar",
+      secEngineMgr: "Gestor del motor offline", togMusic: "Incluir sonidos de Música (+2 MB)", togMusicDesc: "Para música sin internet",
+      btnCacheEngine: "Guardar motor offline", btnLoadLocalEngine: "Cargar motor JS local",
+      aboutDevLabel: "Desarrollador", aboutDesc: "Estudio para convertir proyectos Scratch y TurboWarp (1920×1080) en juegos HTML5.",
+      aboutLinksTitle: "Enlaces oficiales", footerDev: "Desarrollador:",
+      btnLiveTest: "Prueba en vivo", previewReadyTitle: "Vista previa", previewReadyDesc: "Carga un proyecto y pulsa Prueba en vivo.",
+      btnExportOffline: "Descargar HTML Offline (Standalone)", btnExportCdn: "HTML Ligero (CDN)",
+      btnExportZip: "Paquete Web (.ZIP)", btnViewSource: "Ver código HTML",
+      modalCodeTitle: "Código HTML generado", btnCopy: "Copiar", btnCopied: "¡Copiado!",
+      msgNoProject: "¡Carga un proyecto .sb3 / .pmp primero!", msgEngineCached: "Motor Offline Listo", msgEngineOnline: "Modo Online (CDN)",
+      msgDownloadingEngine: "Descargando motor...", msgBuilding: "Generando HTML...", msgDone: "¡Listo! Descarga iniciada.",
+      msgTwApplied: "¡Ajustes de TurboWarp aplicados!", msgConfigLoaded: "Ajustes cargados.",
+      msgLocalEngineSaved: "¡Motor local guardado!", msgAnalyzing: "Analizando proyecto...", msgReadyPrefix: "Listo: ",
+      msgDownloadingFile: "Descargando archivo...", msgQueryingApi: "Consultando API de Scratch...",
+      msgDownloadingPj: "Descargando project.json...", msgDownloadingAssets: "Descargando recursos", msgPreparingTest: "Preparando prueba en vivo...",
+      errInvalidProjectId: "No se encontró un ID de proyecto válido", errProjectNotFound: "Proyecto no encontrado o no compartido",
+      errPjFailed: "Error al obtener project.json", errLoadPrefix: "Error de carga: ", errEngineDownload: "Error al descargar el motor: ",
+      errGeneric: "Error: ", errZip: "Error ZIP: ", errPreview: "Error de vista previa: ",
+      gamePlayBtn: "JUGAR", gameStartTitle: "Iniciar", gameStopTitle: "Detener", gamePauseTitle: "Pausa", gameFsTitle: "Pantalla completa",
+      themeDark: "Tema: Turbo Oscuro", themeLight: "Tema: Claro", themeCyberpunk: "Tema: Cyberpunk",
+      themeOcean: "Tema: Océano", themeEmerald: "Tema: Esmeralda", themeRetro: "Tema: Retro",
+      clear: "Limpiar", stopTest: "Detener prueba", fsTest: "Vista previa en pantalla completa",
+      exportCfgTitle: "Exportar ajustes JSON", importCfgTitle: "Importar ajustes JSON", extensionsLabel: "Extensiones:"
+    },
+    fr: {
+      appTitle: "Scratch & TurboWarp → HTML Studio",
+      appSubtitle: "Local & En ligne • 1920×1080 Full HD • Empaqueteur Hors-ligne",
+      tabProject: "Projet", tabAppearance: "Favicon & Style", tabStage: "Scène 1920×1080",
+      tabEngine: "Moteur TurboWarp", tabControls: "Contrôles & Cloud", tabMobile: "Mobile & Avancé", tabAbout: "À propos",
+      dropTitle: "Déposez votre projet Scratch / TurboWarp ici",
+      dropDesc: "Compatible .sb3, .sb2, .sb et .pmp (100% local)",
+      loadFromIdTitle: "Ou charger via ID / URL Scratch",
+      remotePlaceholder: "Ex : 10128407 ou https://scratch.mit.edu/projects/...",
+      btnLoad: "Charger",
+      remoteHint: "Note : Pour les projets non partagés, importez le fichier .sb3.",
+      applyTwSettings: "Appliquer les réglages TurboWarp",
+      statStage: "Scène", statSprites: "Lutins", statAssets: "Médias",
+      lblPageTitle: "Titre de page", lblMetaDesc: "Meta Description",
+      defaultTitle: "Mon Jeu Scratch", defaultDesc: "Jeu HTML5 TurboWarp & Scratch",
+      defaultUsername: "Joueur####", defaultLoadText: "Chargement du jeu...", defaultCloudId: "salle-jeu-1",
+      secFavicon: "Favicon", btnUploadFav: "Choisir image", btnGenFav: "Générer depuis texte",
+      lblFavChar: "Lettre / Symbole", lblFavBg: "Fond", lblAccentColor: "Couleur d'accent",
+      secBackground: "Arrière-plan & Curseur", lblBgType: "Type de fond", optSolid: "Couleur unie", optGradient: "Dégradé", optImage: "Image",
+      lblBgColor1: "Couleur 1", lblBgColor2: "Couleur 2", lblBgImg: "Image de fond",
+      btnChooseImage: "Choisir image", btnChooseCursor: "Choisir curseur", btnLogoPick: "Choisir Logo",
+      lblCursor: "Curseur", curAuto: "Défaut", curNone: "Caché", curCross: "Viseur", curPointer: "Main", curCustom: "Personnalisé", lblCustomCursor: "Image curseur",
+      secResPresets: "Résolutions rapides",
+      presetClassic: "480×360 (Scratch Classique)", presetWide: "640×360 (Scratch Large)", presetVertical: "1080×1920 (Vertical 9:16)",
+      lblWidth: "Largeur (px)", lblHeight: "Hauteur (px)",
+      lblResizeMode: "Mise à l'échelle", resPreserve: "Conserver le ratio", resStretch: "Étirer", resDynamic: "Dynamique", lblMaxTex: "Texture max",
+      texStandard: "2048 px (Standard)", texRecommended: "4096 px (Recommandé 1920×1080)", texUltra: "8192 px (Ultra 4K/8K)",
+      lblFps: "FPS — 0 = VSync", lblMaxClones: "Clones max",
+      clonesClassic: "300 (Scratch Classique)", clonesUnlimited: "Illimité (TurboWarp)",
+      togCompiler: "Compilateur TurboWarp", togCompilerDesc: "Compile en JS pour plus de vitesse",
+      togInterp: "Interpolation", togInterpDesc: "Mouvement fluide",
+      togHqPen: "Stylo HD", togHqPenDesc: "Rendu net en 1920×1080",
+      togTurbo: "Mode Turbo", togTurboDesc: "Exécution rapide",
+      togFencing: "Désactiver les bordures", togFencingDesc: "Sortie d'écran autorisée",
+      togMisc: "Supprimer les limites", togMiscDesc: "Sans limites de listes ou son",
+      togWarp: "Minuteur Warp", togWarpDesc: "Évite le gel du navigateur",
+      lblCtrlBar: "Barre de contrôle", barTop: "En haut", barHover: "Flottante", barHidden: "Cachée",
+      lblUsername: "Nom d'utilisateur", togFlag: "Drapeau vert & Stop", togPause: "Bouton Pause", togFullscreen: "Plein écran", togFpsHud: "Compteur FPS",
+      secLoadLaunch: "Écran de lancement", togAutoplay: "Lecture auto", togAutoplayDesc: "Affiche un bouton jouer si désactivé",
+      lblLoadText: "Texte de chargement", lblLoadLogo: "Logo",
+      secCloud: "Variables Cloud", lblCloudMode: "Fournisseur", cloudLocal: "LocalStorage", cloudTw: "Serveur TurboWarp", cloudCustom: "WebSocket personnalisé", cloudNone: "Désactivé", lblCloudId: "ID de salle",
+      secTouch: "Contrôles tactiles mobiles", togTouch: "Activer les contrôles tactiles", togTouchDesc: "D-Pad virtuel et boutons A/B",
+      lblDpadMode: "Touches D-Pad", dpadArrows: "Flèches directionnelles", lblBtnA: "Touche A", lblBtnB: "Touche B",
+      secExt: "Extensions & Code", togUnsandboxed: "Mode Unsandboxed", togUnsandboxedDesc: "Recommandé pour les extensions TurboWarp",
+      lblExtUrls: "URLs d'extensions", lblCustomCss: "CSS personnalisé", lblCustomJs: "JS personnalisé",
+      placeholderCustomCss: "/* Règles CSS personnalisées */", placeholderCustomJs: "// JS personnalisé après démarrage",
+      secEngineMgr: "Moteur Hors-ligne", togMusic: "Inclure sons Musique (+2 Mo)", togMusicDesc: "Pour l'extension Musique hors-ligne",
+      btnCacheEngine: "Mettre en cache le moteur", btnLoadLocalEngine: "Charger JS local",
+      aboutDevLabel: "Développeur", aboutDesc: "Studio pour convertir vos projets Scratch et TurboWarp (1920×1080) en jeux HTML5.",
+      aboutLinksTitle: "Liens officiels", footerDev: "Développeur :",
+      btnLiveTest: "Test en direct", previewReadyTitle: "Aperçu", previewReadyDesc: "Chargez un projet puis lancez le test.",
+      btnExportOffline: "Télécharger HTML Hors-ligne", btnExportCdn: "HTML Léger (CDN)",
+      btnExportZip: "Pack Web (.ZIP)", btnViewSource: "Voir le code HTML",
+      modalCodeTitle: "Code HTML généré", btnCopy: "Copier", btnCopied: "Copié !",
+      msgNoProject: "Veuillez d'abord charger un projet .sb3 / .pmp !", msgEngineCached: "Moteur Hors-ligne Prêt", msgEngineOnline: "Mode En ligne (CDN)",
+      msgDownloadingEngine: "Téléchargement du moteur...", msgBuilding: "Création du HTML...", msgDone: "Terminé ! Téléchargement lancé.",
+      msgTwApplied: "Réglages TurboWarp appliqués !", msgConfigLoaded: "Paramètres chargés.",
+      msgLocalEngineSaved: "Moteur local mis en cache !", msgAnalyzing: "Analyse du projet...", msgReadyPrefix: "Prêt : ",
+      msgDownloadingFile: "Téléchargement du fichier...", msgQueryingApi: "Interrogation de l'API Scratch...",
+      msgDownloadingPj: "Téléchargement de project.json...", msgDownloadingAssets: "Téléchargement des ressources", msgPreparingTest: "Préparation du test en direct...",
+      errInvalidProjectId: "ID de projet Scratch valide introuvable", errProjectNotFound: "Projet introuvable ou non partagé",
+      errPjFailed: "Impossible de récupérer project.json", errLoadPrefix: "Erreur de chargement : ", errEngineDownload: "Échec du téléchargement du moteur : ",
+      errGeneric: "Erreur : ", errZip: "Erreur ZIP : ", errPreview: "Erreur d'aperçu : ",
+      gamePlayBtn: "JOUER", gameStartTitle: "Démarrer", gameStopTitle: "Arrêter", gamePauseTitle: "Pause", gameFsTitle: "Plein écran",
+      themeDark: "Thème : Turbo Sombre", themeLight: "Thème : Clair", themeCyberpunk: "Thème : Cyberpunk",
+      themeOcean: "Thème : Océan", themeEmerald: "Thème : Émeraude", themeRetro: "Thème : Rétro",
+      clear: "Effacer", stopTest: "Arrêter le test", fsTest: "Aperçu plein écran",
+      exportCfgTitle: "Exporter la configuration JSON", importCfgTitle: "Importer la configuration JSON", extensionsLabel: "Extensions :"
+    },
+    az: {
+      appTitle: "Scratch & TurboWarp → HTML Studio",
+      appSubtitle: "Yerli və Onlayn • 1920×1080 Full HD • Oflayn Paketləyici",
+      tabProject: "Layihə & Təhlil", tabAppearance: "Favicon & Görünüş", tabStage: "Səhnə & 1920×1080",
+      tabEngine: "TurboWarp Mühərriki", tabControls: "İdarəetmə & Bulud", tabMobile: "Mobil & Əlavə", tabAbout: "Haqqında",
+      dropTitle: "Scratch / TurboWarp Layihəsini Bura Atın",
+      dropDesc: ".sb3, .sb2, .sb və ya .pmp faylları dəstəklənir (100% yerli)",
+      loadFromIdTitle: "Və ya Scratch Layihə ID / URL ilə Yüklə",
+      remotePlaceholder: "Məs: 10128407 və ya https://scratch.mit.edu/projects/...",
+      btnLoad: "Yüklə",
+      remoteHint: "Qeyd: Paylaşılmamış layihələr üçün .sb3 faylını kompüterdən seçin.",
+      applyTwSettings: "TurboWarp Ayarlarını Tətbiq Et",
+      statStage: "Səhnə", statSprites: "Kukla", statAssets: "Resurslar",
+      lblPageTitle: "Səhifə Başlığı", lblMetaDesc: "Açıqlama",
+      defaultTitle: "Mənim Scratch Oyunum", defaultDesc: "TurboWarp & Scratch HTML5 Oyunu",
+      defaultUsername: "Oyunçu####", defaultLoadText: "Oyun Yüklənir...", defaultCloudId: "oyun-otagi-1",
+      secFavicon: "Favicon (Sekmə İkonu)", btnUploadFav: "Şəkil seç", btnGenFav: "Hərfdən yarat",
+      lblFavChar: "Hərf / Simvol", lblFavBg: "Arxa fon", lblAccentColor: "Vurğu rəngi",
+      secBackground: "Arxa fon & Kursor", lblBgType: "Arxa fon növü", optSolid: "Tək rəng", optGradient: "Qradient", optImage: "Şəkil",
+      lblBgColor1: "Rəng 1", lblBgColor2: "Rəng 2", lblBgImg: "Şəkil yüklə",
+      btnChooseImage: "Şəkil seç", btnChooseCursor: "Kursor seç", btnLogoPick: "Loqo seç",
+      lblCursor: "Siçan kursoru", curAuto: "Standart", curNone: "Gizli", curCross: "Nişangah", curPointer: "Əl", curCustom: "Xüsusi", lblCustomCursor: "Xüsusi kursor",
+      secResPresets: "Sürətli ölçülər",
+      presetClassic: "480×360 (Klassik Scratch)", presetWide: "640×360 (Geniş Scratch)", presetVertical: "1080×1920 (Şaquli 9:16)",
+      lblWidth: "En (px)", lblHeight: "Hündürlük (px)",
+      lblResizeMode: "Ölçüləndirmə", resPreserve: "Nisbəti qoru", resStretch: "Tam uzat", resDynamic: "Dinamik", lblMaxTex: "Maks. tekstura",
+      texStandard: "2048 px (Standart)", texRecommended: "4096 px (1920×1080 üçün tövsiyə olunur)", texUltra: "8192 px (Ultra 4K/8K)",
+      lblFps: "FPS — 0 = VSync", lblMaxClones: "Maks. klon",
+      clonesClassic: "300 (Klassik Scratch)", clonesUnlimited: "Limitsiz (TurboWarp)",
+      togCompiler: "TurboWarp Kompilyatoru", togCompilerDesc: "10-100x daha sürətli icra",
+      togInterp: "İnterpolyasiya", togInterpDesc: "Axıcı hərəkət",
+      togHqPen: "HD Qələm", togHqPenDesc: "1920×1080 kəskin xətlər",
+      togTurbo: "Turbo Rejim", togTurboDesc: "Ən yüksək döngü sürəti",
+      togFencing: "Sərhədləri qaldır", togFencingDesc: "Kuklalar ekrandan çıxa bilər",
+      togMisc: "Limitləri qaldır", togMiscDesc: "Səs və siyahı limitlərini ləğv edir",
+      togWarp: "Warp Taymer", togWarpDesc: "Donma qoruması",
+      lblCtrlBar: "İdarə paneli", barTop: "Üst", barHover: "Üzən", barHidden: "Gizli",
+      lblUsername: "İstifadəçi adı", togFlag: "Yaşıl Bayraq & Dayandır", togPause: "Fasilə düyməsi", togFullscreen: "Tam ekran", togFpsHud: "FPS Sayğacı",
+      secLoadLaunch: "Başlatma ekranı", togAutoplay: "Avtomatik başlat", togAutoplayDesc: "Bağlıdırsa başlat düyməsi göstərir",
+      lblLoadText: "Yükləmə mətni", lblLoadLogo: "Loqo",
+      secCloud: "Bulud dəyişənləri", lblCloudMode: "Bulud növü", cloudLocal: "LocalStorage", cloudTw: "TurboWarp Server", cloudCustom: "Xüsusi WebSocket", cloudNone: "Bağlı", lblCloudId: "Otaq ID",
+      secTouch: "Mobil toxunuş idarəetməsi", togTouch: "Toxunuş düymələrini göstər", togTouchDesc: "Virtual D-Pad və A/B düymələri",
+      lblDpadMode: "İstiqamət", dpadArrows: "Ox düymələri", lblBtnA: "A düyməsi", lblBtnB: "B düyməsi",
+      secExt: "Əlavələr & Kod", togUnsandboxed: "Unsandboxed Rejim", togUnsandboxedDesc: "TurboWarp əlavələri üçün tövsiyə olunur",
+      lblExtUrls: "Əlavə URL-ləri", lblCustomCss: "Xüsusi CSS", lblCustomJs: "Xüsusi JS",
+      placeholderCustomCss: "/* Xüsusi CSS qaydaları */", placeholderCustomJs: "// Başlatmadan sonra xüsusi JS",
+      secEngineMgr: "Oflayn Mühərrik İdarəçisi", togMusic: "Musiqi səslərini daxil et (+2 MB)", togMusicDesc: "İnternetsiz musiqi üçün",
+      btnCacheEngine: "Mühərriki yaddaşa yaz", btnLoadLocalEngine: "Yerli JS faylı yüklə",
+      aboutDevLabel: "Tərtibatçı", aboutDesc: "Scratch və TurboWarp (1920×1080 daxil) layihələrini HTML5 oyununa çevirmək üçün təkmilləşdirilmiş studiya.",
+      aboutLinksTitle: "Rəsmi keçidlər", footerDev: "Tərtibatçı:",
+      btnLiveTest: "Canlı Test Et", previewReadyTitle: "Önizləmə", previewReadyDesc: "Layihə yükləyin və Canlı Test düyməsinə basın.",
+      btnExportOffline: "Tək Fayl Oflayn HTML Endir", btnExportCdn: "Yüngül CDN HTML",
+      btnExportZip: "Veb Paketi (.ZIP)", btnViewSource: "HTML Koduna Bax",
+      modalCodeTitle: "Yaradılan HTML Kodu", btnCopy: "Kopyala", btnCopied: "Kopyalandı!",
+      msgNoProject: "Zəhmət olmasa əvvəlcə .sb3 / .pmp layihəsi yükləyin!", msgEngineCached: "Oflayn Mühərrik Hazırdır", msgEngineOnline: "Onlayn Rejim (CDN)",
+      msgDownloadingEngine: "Mühərrik endirilir...", msgBuilding: "HTML hazırlanır...", msgDone: "Hazırdır! Endirmə başladı.",
+      msgTwApplied: "TurboWarp ayarları tətbiq edildi!", msgConfigLoaded: "Ayarlar yükləndi.",
+      msgLocalEngineSaved: "Yerli mühərrik yaddaşa yazıldı!", msgAnalyzing: "Layihə təhlil edilir...", msgReadyPrefix: "Hazırdır: ",
+      msgDownloadingFile: "Fayl endirilir...", msgQueryingApi: "Scratch API sorğulanır...",
+      msgDownloadingPj: "project.json endirilir...", msgDownloadingAssets: "Resurslar endirilir", msgPreparingTest: "Canlı test hazırlanır...",
+      errInvalidProjectId: "Etibarlı Scratch Layihə ID tapılmadı", errProjectNotFound: "Layihə tapılmadı və ya paylaşılmayıb",
+      errPjFailed: "project.json alına bilmədi", errLoadPrefix: "Yükləmə xətası: ", errEngineDownload: "Mühərrik endirilmədi: ",
+      errGeneric: "Xəta: ", errZip: "ZIP xətası: ", errPreview: "Önizləmə xətası: ",
+      gamePlayBtn: "OYNA", gameStartTitle: "Başlat", gameStopTitle: "Dayandır", gamePauseTitle: "Fasilə", gameFsTitle: "Tam ekran",
+      themeDark: "Mövzu: Turbo Tünd", themeLight: "Mövzu: İşıqlı", themeCyberpunk: "Mövzu: Kiberpank",
+      themeOcean: "Mövzu: Okean", themeEmerald: "Mövzu: Zümrüd", themeRetro: "Mövzu: Retro",
+      clear: "Təmizlə", stopTest: "Testi dayandır", fsTest: "Tam ekran önizləmə",
+      exportCfgTitle: "Ayarları JSON endir", importCfgTitle: "Ayarları JSON yüklə", extensionsLabel: "Əlavələr:"
+    }
+  };
+
+  const safeGet = (k, fallback = '') => { try { return localStorage.getItem(k) || fallback; } catch { return fallback; } };
+  const safeSet = (k, v) => { try { localStorage.setItem(k, v); } catch {} };
+
+  let currentLang = safeGet('st_lang', "tr");
+  if (!I18N[currentLang]) currentLang = 'tr';
+  const t = (key) => (I18N[currentLang] && I18N[currentLang][key]) || I18N.en[key] || I18N.tr[key] || key;
+
+  function showToast(msg, type = 'ok') {
+    const wrap = document.getElementById('toast-wrap');
+    const el = document.createElement('div');
+    el.className = 'toast-item ' + type;
+    el.textContent = msg;
+    wrap.appendChild(el);
+    setTimeout(() => { el.remove(); }, 4500);
+  }
+
+  function isDefaultFieldVal(key, val) {
+    return Object.values(I18N).some(dict => dict[key] === val);
+  }
+
+  function applyLanguage(lang) {
+    currentLang = I18N[lang] ? lang : 'tr';
+    safeSet('st_lang', currentLang);
+    document.documentElement.lang = currentLang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.getAttribute('data-i18n');
+      if (k) el.textContent = t(k);
+    });
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const k = el.getAttribute('data-i18n-placeholder');
+      if (k) el.setAttribute('placeholder', t(k));
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach(el => {
+      const k = el.getAttribute('data-i18n-title');
+      if (k) el.setAttribute('title', t(k));
+    });
+    const titleEl = document.getElementById('cfgTitle');
+    const descEl = document.getElementById('cfgDesc');
+    const userEl = document.getElementById('cfgUsername');
+    const loadEl = document.getElementById('cfgLoadText');
+    const cloudEl = document.getElementById('cfgCloudId');
+    if (titleEl && isDefaultFieldVal('defaultTitle', titleEl.value)) titleEl.value = t('defaultTitle');
+    if (descEl && isDefaultFieldVal('defaultDesc', descEl.value)) descEl.value = t('defaultDesc');
+    if (userEl && isDefaultFieldVal('defaultUsername', userEl.value)) userEl.value = t('defaultUsername');
+    if (loadEl && isDefaultFieldVal('defaultLoadText', loadEl.value)) loadEl.value = t('defaultLoadText');
+    if (cloudEl && isDefaultFieldVal('defaultCloudId', cloudEl.value)) cloudEl.value = t('defaultCloudId');
+    if (typeof updateMockPreview === 'function') updateMockPreview();
+    if (typeof state !== 'undefined' && state.projectBuffer) {
+      setStatus(t('msgReadyPrefix') + state.projectName);
+    }
+    refreshEngineStatus();
+  }
+
+  const $ = (id) => document.getElementById(id);
+
+  function applyTheme(theme) {
+    document.body.setAttribute('data-theme', theme);
+    safeSet('st_theme', theme);
+  }
+  const savedTheme = safeGet('st_theme', "retro");
+  $('themeSelect').value = savedTheme;
+  applyTheme(savedTheme);
+
+  $('themeSelect').addEventListener('change', e => applyTheme(e.target.value));
+  $('langSelect').value = currentLang;
+  $('langSelect').addEventListener('change', e => applyLanguage(e.target.value));
+
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      $('panel-' + btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  const SCAFFOLDING_VER = '0.4.0';
+  const CDN_MIN = `https://cdn.jsdelivr.net/npm/@turbowarp/scaffolding@${SCAFFOLDING_VER}/dist/scaffolding-min.js`;
+  const CDN_MUSIC = `https://cdn.jsdelivr.net/npm/@turbowarp/scaffolding@${SCAFFOLDING_VER}/dist/scaffolding-with-music.js`;
+
+  const state = {
+    projectName: 'proje.sb3',
+    projectBuffer: null,
+    projectBase64: null,
+    detectedTw: null,
+    faviconDataUrl: '',
+    bgImageDataUrl: '',
+    cursorImageDataUrl: '',
+    logoDataUrl: '',
+    previewBlobUrl: null
+  };
+
+  function setStatus(msg, progress = null) {
+    $('statusLog').textContent = msg || '';
+    if (progress === null) {
+      $('progressWrap').style.display = 'none';
+    } else {
+      $('progressWrap').style.display = 'block';
+      $('progressBar').style.width = Math.max(0, Math.min(100, progress)) + '%';
+    }
+  }
+
+  function fileToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result);
+      r.onerror = reject;
+      r.readAsDataURL(file);
+    });
+  }
+
+  async function ensureBase64() {
+    if (state.projectBase64) return state.projectBase64;
+    if (!state.projectBuffer) return null;
+    state.projectBase64 = await new Promise((resolve, reject) => {
+      const r = new FileReader();
+      r.onload = () => resolve(r.result.slice(r.result.indexOf(',') + 1));
+      r.onerror = reject;
+      r.readAsDataURL(new Blob([state.projectBuffer]));
+    });
+    return state.projectBase64;
+  }
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, s => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[s]));
+  }
+
+  const DB_NAME = 'ScratchHtmlStudioDB';
+  const STORE_NAME = 'engines';
+
+  function openDB() {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = () => {
+        if (!req.result.objectStoreNames.contains(STORE_NAME)) {
+          req.result.createObjectStore(STORE_NAME);
+        }
+      };
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  }
+
+  async function dbGet(key) {
+    try {
+      const db = await openDB();
+      return await new Promise((res, rej) => {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const req = tx.objectStore(STORE_NAME).get(key);
+        req.onsuccess = () => res(req.result || null);
+        req.onerror = () => rej(req.error);
+      });
+    } catch { return null; }
+  }
+
+  async function dbSet(key, val) {
+    const db = await openDB();
+    return await new Promise((res, rej) => {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).put(val, key);
+      tx.oncomplete = () => res();
+      tx.onerror = () => rej(tx.error);
+    });
+  }
+
+  async function refreshEngineStatus() {
+    const key = $('cfgWithMusic').checked ? 'scaffolding-with-music' : 'scaffolding-min';
+    const cached = await dbGet(key);
+    const dot = $('engineDot');
+    const txt = $('engineStatusText');
+    if (cached) {
+      dot.classList.add('ok');
+      txt.textContent = t('msgEngineCached');
+    } else {
+      dot.classList.remove('ok');
+      txt.textContent = t('msgEngineOnline');
+    }
+  }
+
+  async function getEngineCode(withMusic) {
+    const key = withMusic ? 'scaffolding-with-music' : 'scaffolding-min';
+    let code = await dbGet(key);
+    if (code) return code;
+    const url = withMusic ? CDN_MUSIC : CDN_MIN;
+    setStatus(t('msgDownloadingEngine'), 25);
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error('Engine download failed: HTTP ' + resp.status);
+    code = await resp.text();
+    await dbSet(key, code);
+    await refreshEngineStatus();
+    return code;
+  }
+
+  $('btnCacheEngine').addEventListener('click', async () => {
+    try {
+      await getEngineCode($('cfgWithMusic').checked);
+      setStatus(t('msgEngineCached'), 100);
+      showToast(t('msgEngineCached'), 'ok');
+      setTimeout(() => setStatus(''), 2500);
+    } catch (e) {
+      showToast(t('errEngineDownload') + e.message, 'err');
+      setStatus('');
+    }
+  });
+
+  $('btnLoadLocalEngine').addEventListener('click', () => $('engineFileInput').click());
+  $('engineFileInput').addEventListener('change', async (e) => {
+    const f = e.target.files[0];
+    if (!f) return;
+    const text = await f.text();
+    const key = $('cfgWithMusic').checked ? 'scaffolding-with-music' : 'scaffolding-min';
+    await dbSet(key, text);
+    await refreshEngineStatus();
+    setStatus(t('msgLocalEngineSaved'));
+    showToast(t('msgLocalEngineSaved'), 'ok');
+  });
+  $('cfgWithMusic').addEventListener('change', refreshEngineStatus);
+
+  async function readProjectJsonFromZip(buffer) {
+    const bytes = new Uint8Array(buffer);
+    const view = new DataView(buffer);
+    let eocd = -1;
+    for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65557); i--) {
+      if (view.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+    }
+    if (eocd < 0) return null;
+
+    const total = view.getUint16(eocd + 10, true);
+    let ptr = view.getUint32(eocd + 16, true);
+    const dec = new TextDecoder();
+
+    for (let i = 0; i < total; i++) {
+      if (view.getUint32(ptr, true) !== 0x02014b50) break;
+      const method = view.getUint16(ptr + 10, true);
+      const compSize = view.getUint32(ptr + 20, true);
+      const nameLen = view.getUint16(ptr + 28, true);
+      const extraLen = view.getUint16(ptr + 30, true);
+      const commentLen = view.getUint16(ptr + 32, true);
+      const lhOff = view.getUint32(ptr + 42, true);
+      const name = dec.decode(bytes.subarray(ptr + 46, ptr + 46 + nameLen));
+
+      if (name === 'project.json') {
+        const lNameLen = view.getUint16(lhOff + 26, true);
+        const lExtraLen = view.getUint16(lhOff + 28, true);
+        const dataStart = lhOff + 30 + lNameLen + lExtraLen;
+        const slice = bytes.subarray(dataStart, dataStart + compSize);
+        if (method === 0) return JSON.parse(dec.decode(slice));
+        if (method === 8 && typeof DecompressionStream !== 'undefined') {
+          const stream = new Blob([slice]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+          const text = await new Response(stream).text();
+          return JSON.parse(text);
+        }
+        return null;
+      }
+      ptr += 46 + nameLen + extraLen + commentLen;
+    }
+    return null;
+  }
+
+  const CRC_TABLE = (() => {
+    const t = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let c = i;
+      for (let k = 0; k < 8; k++) c = (c & 1) ? (0xedb88320 ^ (c >>> 1)) : (c >>> 1);
+      t[i] = c >>> 0;
+    }
+    return t;
+  })();
+
+  function crc32(u8) {
+    let c = 0xffffffff;
+    for (let i = 0; i < u8.length; i++) c = CRC_TABLE[(c ^ u8[i]) & 0xff] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  }
+
+  function buildZipBlob(entries) {
+    const enc = new TextEncoder();
+    const localParts = [];
+    const centralParts = [];
+    let offset = 0;
+
+    for (const entry of entries) {
+      const nameBytes = enc.encode(entry.name);
+      const data = entry.data instanceof Uint8Array ? entry.data : enc.encode(entry.data);
+      const crc = crc32(data);
+
+      const lh = new Uint8Array(30 + nameBytes.length);
+      const lv = new DataView(lh.buffer);
+      lv.setUint32(0, 0x04034b50, true);
+      lv.setUint16(4, 20, true);
+      lv.setUint16(6, 0x0800, true);
+      lv.setUint16(8, 0, true);
+      lv.setUint32(14, crc, true);
+      lv.setUint32(18, data.length, true);
+      lv.setUint32(22, data.length, true);
+      lv.setUint16(26, nameBytes.length, true);
+      lh.set(nameBytes, 30);
+
+      localParts.push(lh, data);
+
+      const cd = new Uint8Array(46 + nameBytes.length);
+      const cv = new DataView(cd.buffer);
+      cv.setUint32(0, 0x02014b50, true);
+      cv.setUint16(4, 20, true);
+      cv.setUint16(6, 20, true);
+      cv.setUint16(8, 0x0800, true);
+      cv.setUint16(10, 0, true);
+      cv.setUint32(16, crc, true);
+      cv.setUint32(20, data.length, true);
+      cv.setUint32(24, data.length, true);
+      cv.setUint16(28, nameBytes.length, true);
+      cv.setUint32(42, offset, true);
+      cd.set(nameBytes, 46);
+      centralParts.push(cd);
+
+      offset += lh.length + data.length;
+    }
+
+    const cdSize = centralParts.reduce((a, b) => a + b.length, 0);
+    const eocd = new Uint8Array(22);
+    const ev = new DataView(eocd.buffer);
+    ev.setUint32(0, 0x06054b50, true);
+    ev.setUint16(8, entries.length, true);
+    ev.setUint16(10, entries.length, true);
+    ev.setUint32(12, cdSize, true);
+    ev.setUint32(16, offset, true);
+
+    return new Blob([...localParts, ...centralParts, eocd], { type: 'application/zip' });
+  }
+
+  async function loadProjectBuffer(buffer, name) {
+    state.projectBuffer = buffer;
+    state.projectBase64 = null;
+    state.projectName = name;
+    setStatus(t('msgAnalyzing'), 40);
+
+    const baseTitle = name.replace(/\.(sb3|sb2|sb|pmp|zip)$/i, '');
+    if (isDefaultFieldVal('defaultTitle', $('cfgTitle').value) || !$('cfgTitle').value.trim()) {
+      $('cfgTitle').value = baseTitle;
+      updateMockPreview();
+    }
+    $('cfgCloudId').value = 'tw-' + baseTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24);
+
+    let pj = null;
+    try { pj = await readProjectJsonFromZip(buffer); } catch {}
+
+    const mb = buffer.byteLength / (1024 * 1024);
+    $('inspectorBox').style.display = 'block';
+    $('inspName').textContent = name;
+    $('inspSize').textContent = mb.toFixed(2) + ' MB (' + Math.round(buffer.byteLength / 1024) + ' KB)';
+    $('estSizeLog').textContent = `~${(mb * 1.34 + 2.2).toFixed(1)} MB HTML`;
+
+    state.detectedTw = null;
+    $('btnApplyTw').style.display = 'none';
+    $('inspExtBox').style.display = 'none';
+
+    if (pj && Array.isArray(pj.targets)) {
+      const sprites = pj.targets.filter(x => !x.isStage).length;
+      const assets = pj.targets.reduce((acc, tg) => acc + (tg.costumes?.length || 0) + (tg.sounds?.length || 0), 0);
+      $('stSprites').textContent = sprites;
+      $('stAssets').textContent = assets;
+
+      const stage = pj.targets.find(x => x.isStage) || pj.targets[0];
+      if (stage && stage.comments) {
+        for (const c of Object.values(stage.comments)) {
+          if (c && typeof c.text === 'string' && c.text.includes('_twconfig_')) {
+            const match = c.text.match(/\{[\s\S]*\}/);
+            if (match) {
+              try { state.detectedTw = JSON.parse(match[0]); } catch {}
+            }
+          }
+        }
+      }
+
+      const tw = state.detectedTw;
+      const w = tw?.width || 480;
+      const h = tw?.height || 360;
+      const fps = tw?.fps ?? 30;
+      $('stRes').textContent = `${w}×${h}`;
+      $('stFps').textContent = fps;
+
+      if (tw) {
+        $('btnApplyTw').style.display = 'inline-flex';
+        applyTurboWarpDetectedSettings(tw);
+      }
+
+      const extUrls = pj.extensionURLs ? Object.values(pj.extensionURLs) : [];
+      if (extUrls.length > 0 || (pj.extensions && pj.extensions.length > 0)) {
+        $('inspExtBox').style.display = 'block';
+        const list = [...(pj.extensions || []), ...extUrls];
+        $('inspExtBox').textContent = t('extensionsLabel') + ' ' + [...new Set(list)].join(', ');
+      }
+    } else {
+      $('stRes').textContent = 'SB2/SB';
+      $('stSprites').textContent = '-';
+      $('stAssets').textContent = '-';
+      $('stFps').textContent = '-';
+    }
+
+    setStatus(t('msgReadyPrefix') + name);
+  }
+
+  function applyTurboWarpDetectedSettings(tw) {
+    if (!tw) return;
+    if (tw.width) $('cfgWidth').value = tw.width;
+    if (tw.height) $('cfgHeight').value = tw.height;
+    if (typeof tw.fps === 'number') $('cfgFps').value = tw.fps;
+    if (typeof tw.turbo === 'boolean') $('cfgTurbo').checked = tw.turbo;
+    if (typeof tw.interpolation === 'boolean') $('cfgInterpolation').checked = tw.interpolation;
+    if (typeof tw.hq === 'boolean') $('cfgHqPen').checked = tw.hq;
+    if (tw.runtimeOptions) {
+      if (typeof tw.runtimeOptions.fencing === 'boolean') $('cfgDisableFencing').checked = !tw.runtimeOptions.fencing;
+      if (typeof tw.runtimeOptions.miscLimits === 'boolean') $('cfgRemoveMisc').checked = !tw.runtimeOptions.miscLimits;
+      if (tw.runtimeOptions.maxClones !== undefined) {
+        $('cfgMaxClones').value = tw.runtimeOptions.maxClones === null ? 'Infinity' : String(tw.runtimeOptions.maxClones);
+      }
+    }
+    if (tw.compiler) {
+      if (typeof tw.compiler.enabled === 'boolean') $('cfgCompiler').checked = tw.compiler.enabled;
+      if (typeof tw.compiler.warpTimer === 'boolean') $('cfgWarpTimer').checked = tw.compiler.warpTimer;
+    }
+    syncResolutionUI();
+  }
+
+  $('btnApplyTw').addEventListener('click', () => {
+    applyTurboWarpDetectedSettings(state.detectedTw);
+    setStatus(t('msgTwApplied'));
+    showToast(t('msgTwApplied'), 'ok');
+  });
+
+  const dz = $('dropzone');
+  dz.addEventListener('click', () => $('projectFileInput').click());
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+  dz.addEventListener('drop', async e => {
+    e.preventDefault(); dz.classList.remove('drag');
+    const f = e.dataTransfer.files[0];
+    if (f) await loadProjectBuffer(await f.arrayBuffer(), f.name);
+  });
+  $('projectFileInput').addEventListener('change', async e => {
+    const f = e.target.files[0];
+    if (f) await loadProjectBuffer(await f.arrayBuffer(), f.name);
+  });
+
+  $('btnLoadRemote').addEventListener('click', async () => {
+    const raw = $('projectIdInput').value.trim();
+    if (!raw) return;
+    try {
+      if (/\.sb3(\?|$)/i.test(raw) || (/^https?:\/\//.test(raw) && !raw.includes('scratch.mit.edu'))) {
+        setStatus(t('msgDownloadingFile'), 20);
+        const r = await fetch(raw);
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        await loadProjectBuffer(await r.arrayBuffer(), 'remote-project.sb3');
+        return;
+      }
+
+      const idMatch = raw.match(/\d+/);
+      if (!idMatch) throw new Error(t('errInvalidProjectId'));
+      const id = idMatch[0];
+
+      setStatus(t('msgQueryingApi'), 10);
+      const metaRes = await fetch(`https://trampoline.turbowarp.org/api/projects/${id}`);
+      if (!metaRes.ok) throw new Error(t('errProjectNotFound') + ' (HTTP ' + metaRes.status + ')');
+      const meta = await metaRes.json();
+      const token = meta.project_token;
+      const title = meta.title || ('scratch-' + id);
+
+      setStatus(t('msgDownloadingPj'), 25);
+      const pjUrl = `https://projects.scratch.mit.edu/${id}${token ? '?token=' + encodeURIComponent(token) : ''}`;
+      const pjRes = await fetch(pjUrl);
+      if (!pjRes.ok) throw new Error(t('errPjFailed'));
+      const pjText = await pjRes.text();
+      const pj = JSON.parse(pjText);
+
+      const md5Set = new Set();
+      for (const tg of (pj.targets || [])) {
+        for (const c of (tg.costumes || [])) if (c.md5ext) md5Set.add(c.md5ext);
+        for (const s of (tg.sounds || [])) if (s.md5ext) md5Set.add(s.md5ext);
+      }
+
+      const assets = [...md5Set];
+      const entries = [{ name: 'project.json', data: pjText }];
+      let done = 0;
+
+      const batchSize = 6;
+      for (let i = 0; i < assets.length; i += batchSize) {
+        const batch = assets.slice(i, i + batchSize);
+        await Promise.all(batch.map(async md5 => {
+          const ar = await fetch(`https://assets.scratch.mit.edu/internalapi/asset/${md5}/get/`);
+          if (ar.ok) entries.push({ name: md5, data: new Uint8Array(await ar.arrayBuffer()) });
+          done++;
+          setStatus(`${t('msgDownloadingAssets')} (${done}/${assets.length})...`, 25 + (done / Math.max(1, assets.length)) * 70);
+        }));
+      }
+
+      const zipBlob = buildZipBlob(entries);
+      await loadProjectBuffer(await zipBlob.arrayBuffer(), title + '.sb3');
+    } catch (err) {
+      showToast(t('errLoadPrefix') + err.message, 'err');
+      setStatus('');
+    }
+  });
+
+  function generateEmojiFavicon() {
+    const ch = ($('favEmojiInput').value || 'A').trim();
+    const bg = $('favBgColor').value || '#ff4c4c';
+    const c = document.createElement('canvas');
+    c.width = 128; c.height = 128;
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = bg;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(0, 0, 128, 128, 28);
+    else ctx.rect(0, 0, 128, 128);
+    ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 72px "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(ch, 64, 67);
+    state.faviconDataUrl = c.toDataURL('image/png');
+    updateMockPreview();
+  }
+
+  function updateMockPreview() {
+    const title = $('cfgTitle').value || 'Scratch Game';
+    $('mockTabTitle').textContent = title;
+    const fav = state.faviconDataUrl || $('studio-favicon').href;
+    $('favPreviewImg').src = fav;
+    $('mockTabFavicon').src = fav;
+  }
+
+  function syncColorPair(colorEl, textEl) {
+    colorEl.addEventListener('input', () => { textEl.value = colorEl.value; });
+    textEl.addEventListener('input', () => {
+      if (/^#[0-9a-f]{6}$/i.test(textEl.value)) colorEl.value = textEl.value;
+    });
+  }
+  syncColorPair($('favBgColor'), $('favBgColorTxt'));
+  syncColorPair($('cfgAccent'), $('cfgAccentTxt'));
+  syncColorPair($('cfgBg1'), $('cfgBg1Txt'));
+  syncColorPair($('cfgBg2'), $('cfgBg2Txt'));
+
+  $('cfgTitle').addEventListener('input', updateMockPreview);
+  $('btnGenEmojiFav').addEventListener('click', generateEmojiFavicon);
+  $('btnUploadFavicon').addEventListener('click', () => $('faviconFileInput').click());
+  $('faviconFileInput').addEventListener('change', async e => {
+    if (e.target.files[0]) {
+      state.faviconDataUrl = await fileToDataUrl(e.target.files[0]);
+      updateMockPreview();
+    }
+  });
+  $('btnClearFavicon').addEventListener('click', () => {
+    state.faviconDataUrl = '';
+    updateMockPreview();
+  });
+
+  $('cfgBgType').addEventListener('change', () => {
+    const v = $('cfgBgType').value;
+    $('bgColor1Wrap').style.display = v === 'image' ? 'none' : 'flex';
+    $('bgColor2Wrap').style.display = v === 'gradient' ? 'flex' : 'none';
+    $('bgImageWrap').style.display = v === 'image' ? 'flex' : 'none';
+  });
+  $('btnUploadBg').addEventListener('click', () => $('bgFileInput').click());
+  $('bgFileInput').addEventListener('change', async e => {
+    if (e.target.files[0]) state.bgImageDataUrl = await fileToDataUrl(e.target.files[0]);
+  });
+
+  $('cfgCursor').addEventListener('change', () => {
+    $('customCursorWrap').style.display = $('cfgCursor').value === 'custom' ? 'flex' : 'none';
+  });
+  $('btnUploadCursor').addEventListener('click', () => $('cursorFileInput').click());
+  $('cursorFileInput').addEventListener('change', async e => {
+    if (e.target.files[0]) state.cursorImageDataUrl = await fileToDataUrl(e.target.files[0]);
+  });
+
+  $('btnUploadLogo').addEventListener('click', () => $('logoFileInput').click());
+  $('logoFileInput').addEventListener('change', async e => {
+    if (e.target.files[0]) state.logoDataUrl = await fileToDataUrl(e.target.files[0]);
+  });
+  $('btnClearLogo').addEventListener('click', () => { state.logoDataUrl = ''; });
+
+  $('cfgCloudMode').addEventListener('change', () => {
+    const m = $('cfgCloudMode').value;
+    $('cloudWsWrap').style.display = m === 'custom' ? 'flex' : 'none';
+    $('cloudIdWrap').style.display = m === 'none' ? 'none' : 'flex';
+  });
+
+  function syncResolutionUI() {
+    const w = parseInt($('cfgWidth').value, 10) || 480;
+    const h = parseInt($('cfgHeight').value, 10) || 360;
+    $('previewRatioBadge').textContent = `${w} × ${h}`;
+    $('previewBox').style.aspectRatio = `${w} / ${h}`;
+    document.querySelectorAll('#resPresets .chip').forEach(ch => {
+      ch.classList.toggle('active', +ch.dataset.w === w && +ch.dataset.h === h);
+    });
+  }
+  document.querySelectorAll('#resPresets .chip').forEach(ch => {
+    ch.addEventListener('click', () => {
+      $('cfgWidth').value = ch.dataset.w;
+      $('cfgHeight').value = ch.dataset.h;
+      syncResolutionUI();
+    });
+  });
+  $('cfgWidth').addEventListener('input', syncResolutionUI);
+  $('cfgHeight').addEventListener('input', syncResolutionUI);
+
+  generateEmojiFavicon();
+
+  function collectConfig() {
+    const extLines = $('cfgExtensions').value.split(/\r?\n/).map(s => s.trim()).filter(Boolean);
+    const maxClonesRaw = $('cfgMaxClones').value;
+    return {
+      title: $('cfgTitle').value.trim() || 'Scratch Game',
+      description: $('cfgDesc').value.trim(),
+      favicon: state.faviconDataUrl,
+      accent: $('cfgAccent').value,
+      bgType: $('cfgBgType').value,
+      bg1: $('cfgBg1').value,
+      bg2: $('cfgBg2').value,
+      bgImage: state.bgImageDataUrl,
+      cursor: $('cfgCursor').value,
+      cursorImage: state.cursorImageDataUrl,
+      width: Math.max(1, parseInt($('cfgWidth').value, 10) || 480),
+      height: Math.max(1, parseInt($('cfgHeight').value, 10) || 360),
+      resizeMode: $('cfgResizeMode').value,
+      maxTexture: parseInt($('cfgMaxTexture').value, 10) || 4096,
+      fps: Math.max(0, parseInt($('cfgFps').value, 10) || 60),
+      maxClones: maxClonesRaw === 'Infinity' ? null : (parseInt(maxClonesRaw, 10) || 300),
+      compiler: $('cfgCompiler').checked,
+      interpolation: $('cfgInterpolation').checked,
+      hqPen: $('cfgHqPen').checked,
+      turbo: $('cfgTurbo').checked,
+      disableFencing: $('cfgDisableFencing').checked,
+      removeMisc: $('cfgRemoveMisc').checked,
+      warpTimer: $('cfgWarpTimer').checked,
+      controlBar: $('cfgControlBar').value,
+      username: $('cfgUsername').value || t('defaultUsername'),
+      showFlag: $('cfgShowFlag').checked,
+      showPause: $('cfgShowPause').checked,
+      showFullscreen: $('cfgShowFullscreen').checked,
+      showFps: $('cfgShowFps').checked,
+      autoplay: $('cfgAutoplay').checked,
+      loadText: $('cfgLoadText').value || t('defaultLoadText'),
+      logo: state.logoDataUrl,
+      cloudMode: $('cfgCloudMode').value,
+      cloudWs: $('cfgCloudWs').value.trim(),
+      cloudId: $('cfgCloudId').value.trim() || 'tw-game',
+      touchControls: $('cfgTouchControls').checked,
+      dpadKeys: $('cfgDpadKeys').value,
+      touchA: $('cfgTouchA').value.trim() || 'Space',
+      touchB: $('cfgTouchB').value.trim() || 'KeyZ',
+      unsandboxed: $('cfgUnsandboxed').checked,
+      extensions: extLines,
+      customCss: $('cfgCustomCss').value,
+      customJs: $('cfgCustomJs').value,
+      withMusic: $('cfgWithMusic').checked
+    };
+  }
+
+  function applyConfig(c) {
+    if (!c) return;
+    if (c.title !== undefined) $('cfgTitle').value = c.title;
+    if (c.description !== undefined) $('cfgDesc').value = c.description;
+    if (c.favicon !== undefined) state.faviconDataUrl = c.favicon;
+    if (c.accent) { $('cfgAccent').value = c.accent; $('cfgAccentTxt').value = c.accent; }
+    if (c.bgType) { $('cfgBgType').value = c.bgType; $('cfgBgType').dispatchEvent(new Event('change')); }
+    if (c.bg1) { $('cfgBg1').value = c.bg1; $('cfgBg1Txt').value = c.bg1; }
+    if (c.bg2) { $('cfgBg2').value = c.bg2; $('cfgBg2Txt').value = c.bg2; }
+    if (c.bgImage !== undefined) state.bgImageDataUrl = c.bgImage;
+    if (c.cursor) { $('cfgCursor').value = c.cursor; $('cfgCursor').dispatchEvent(new Event('change')); }
+    if (c.cursorImage !== undefined) state.cursorImageDataUrl = c.cursorImage;
+    if (c.width) $('cfgWidth').value = c.width;
+    if (c.height) $('cfgHeight').value = c.height;
+    if (c.resizeMode) $('cfgResizeMode').value = c.resizeMode;
+    if (c.maxTexture) $('cfgMaxTexture').value = String(c.maxTexture);
+    if (c.fps !== undefined) $('cfgFps').value = c.fps;
+    if (c.maxClones !== undefined) $('cfgMaxClones').value = c.maxClones === null ? 'Infinity' : String(c.maxClones);
+    if (typeof c.compiler === 'boolean') $('cfgCompiler').checked = c.compiler;
+    if (typeof c.interpolation === 'boolean') $('cfgInterpolation').checked = c.interpolation;
+    if (typeof c.hqPen === 'boolean') $('cfgHqPen').checked = c.hqPen;
+    if (typeof c.turbo === 'boolean') $('cfgTurbo').checked = c.turbo;
+    if (typeof c.disableFencing === 'boolean') $('cfgDisableFencing').checked = c.disableFencing;
+    if (typeof c.removeMisc === 'boolean') $('cfgRemoveMisc').checked = c.removeMisc;
+    if (typeof c.warpTimer === 'boolean') $('cfgWarpTimer').checked = c.warpTimer;
+    if (c.controlBar) $('cfgControlBar').value = c.controlBar;
+    if (c.username !== undefined) $('cfgUsername').value = c.username;
+    if (typeof c.showFlag === 'boolean') $('cfgShowFlag').checked = c.showFlag;
+    if (typeof c.showPause === 'boolean') $('cfgShowPause').checked = c.showPause;
+    if (typeof c.showFullscreen === 'boolean') $('cfgShowFullscreen').checked = c.showFullscreen;
+    if (typeof c.showFps === 'boolean') $('cfgShowFps').checked = c.showFps;
+    if (typeof c.autoplay === 'boolean') $('cfgAutoplay').checked = c.autoplay;
+    if (c.loadText !== undefined) $('cfgLoadText').value = c.loadText;
+    if (c.logo !== undefined) state.logoDataUrl = c.logo;
+    if (c.cloudMode) { $('cfgCloudMode').value = c.cloudMode; $('cfgCloudMode').dispatchEvent(new Event('change')); }
+    if (c.cloudWs !== undefined) $('cfgCloudWs').value = c.cloudWs;
+    if (c.cloudId !== undefined) $('cfgCloudId').value = c.cloudId;
+    if (typeof c.touchControls === 'boolean') $('cfgTouchControls').checked = c.touchControls;
+    if (c.dpadKeys) $('cfgDpadKeys').value = c.dpadKeys;
+    if (c.touchA) $('cfgTouchA').value = c.touchA;
+    if (c.touchB) $('cfgTouchB').value = c.touchB;
+    if (typeof c.unsandboxed === 'boolean') $('cfgUnsandboxed').checked = c.unsandboxed;
+    if (Array.isArray(c.extensions)) $('cfgExtensions').value = c.extensions.join('\n');
+    if (c.customCss !== undefined) $('cfgCustomCss').value = c.customCss;
+    if (c.customJs !== undefined) $('cfgCustomJs').value = c.customJs;
+    if (typeof c.withMusic === 'boolean') { $('cfgWithMusic').checked = c.withMusic; refreshEngineStatus(); }
+    updateMockPreview();
+    syncResolutionUI();
+  }
+
+  $('btnExportCfg').addEventListener('click', () => {
+    downloadBlob(new Blob([JSON.stringify(collectConfig(), null, 2)], { type: 'application/json' }), 'studio-config.json');
+  });
+  $('btnImportCfg').addEventListener('click', () => $('cfgFileInput').click());
+  $('cfgFileInput').addEventListener('change', async e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    applyConfig(JSON.parse(await f.text()));
+    setStatus(t('msgConfigLoaded'));
+    showToast(t('msgConfigLoaded'), 'ok');
+  });
+
+  function buildGeneratedHtml({ mode, engineCode = null, projectFilename = 'project.sb3', faviconHref = null, base64Data = '' }) {
+    const cfg = collectConfig();
+    const fav = faviconHref !== null ? faviconHref : cfg.favicon;
+
+    let bgCss = cfg.bg1;
+    if (cfg.bgType === 'gradient') bgCss = `linear-gradient(135deg, ${cfg.bg1}, ${cfg.bg2})`;
+    else if (cfg.bgType === 'image' && cfg.bgImage) bgCss = `url("${cfg.bgImage}") center/cover no-repeat fixed ${cfg.bg1}`;
+
+    let cursorCss = cfg.cursor;
+    if (cfg.cursor === 'custom' && cfg.cursorImage) cursorCss = `url("${cfg.cursorImage}") 16 16, auto`;
+
+    const runtimeCfg = {
+      width: cfg.width, height: cfg.height, resizeMode: cfg.resizeMode, maxTexture: cfg.maxTexture,
+      fps: cfg.fps, maxClones: cfg.maxClones, compiler: cfg.compiler, interpolation: cfg.interpolation,
+      hqPen: cfg.hqPen, turbo: cfg.turbo, disableFencing: cfg.disableFencing, removeMisc: cfg.removeMisc,
+      warpTimer: cfg.warpTimer, accent: cfg.accent, username: cfg.username, autoplay: cfg.autoplay,
+      cloudMode: cfg.cloudMode, cloudWs: cfg.cloudWs, cloudId: cfg.cloudId,
+      touchControls: cfg.touchControls, dpadKeys: cfg.dpadKeys, touchA: cfg.touchA, touchB: cfg.touchB,
+      unsandboxed: cfg.unsandboxed, extensions: cfg.extensions, showFps: cfg.showFps,
+      zipMode: mode === 'zip', projectFilename
+    };
+
+    const cdnUrl = cfg.withMusic ? CDN_MUSIC : CDN_MIN;
+    const safeJson = (obj) => JSON.stringify(obj).replace(/</g, '\\u003c');
+
+    let engineScriptTag = '';
+    if (mode === 'offline') {
+      const encodedEngine = JSON.stringify(engineCode).replace(/</g, '\\u003c');
+      engineScriptTag = `<script>
+(function(){
+  var s = document.createElement('script');
+  s.textContent = ${encodedEngine};
+  document.head.appendChild(s);
+})();
+<` + `/script>`;
+    } else if (mode === 'zip') {
+      engineScriptTag = `<script src="scaffolding.js"><` + `/script>`;
+    } else {
+      engineScriptTag = `<script src="${cdnUrl}"><` + `/script>`;
+    }
+
+    const projectDataBlock = mode === 'zip'
+      ? ''
+      : `<script id="tw-project-b64" type="text/plain">${base64Data}<` + `/script>`;
+
+    const ctrlBarClass = `bar-${cfg.controlBar}`;
+
+    const svgFlag = `<svg width="14" height="14" viewBox="0 0 24 24" fill="#22c55e"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15" stroke="#22c55e" stroke-width="2.5"/></svg>`;
+    const svgStop = `<svg width="13" height="13" viewBox="0 0 24 24" fill="#ef4444"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/></svg>`;
+    const svgPause = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>`;
+    const svgPlay = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>`;
+    const svgFs = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/></svg>`;
+
+    return `<!DOCTYPE html>
+<html lang="${currentLang}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>${escapeHtml(cfg.title)}</title>
+${cfg.description ? `<meta name="description" content="${escapeHtml(cfg.description)}">` : ''}
+${fav ? `<link rel="icon" href="${escapeHtml(fav)}">\n<link rel="apple-touch-icon" href="${escapeHtml(fav)}">` : ''}
+<style>
+  :root { --accent: ${cfg.accent}; }
+  * { box-sizing: border-box; user-select: none; -webkit-user-select: none; }
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
+    background: ${bgCss};
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #fff;
+  }
+  #app { position: fixed; inset: 0; display: flex; flex-direction: column; }
+  #controls {
+    height: 40px; padding: 0 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(13, 16, 23, 0.82); backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.1); z-index: 30;
+    transition: opacity .22s ease, transform .22s ease;
+  }
+  .bar-hidden #controls { display: none !important; }
+  .bar-hover #controls {
+    position: absolute; top: 0; left: 0; right: 0; opacity: 0; transform: translateY(-8px);
+  }
+  .bar-hover:hover #controls, .bar-hover #controls:focus-within { opacity: 1; transform: translateY(0); }
+
+  .ctrl-group { display: flex; align-items: center; gap: 6px; }
+  .cbtn {
+    border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.08);
+    color: #fff; height: 28px; min-width: 30px; padding: 0 9px; border-radius: 7px;
+    cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; gap: 5px;
+    transition: background .15s, border-color .15s;
+  }
+  .cbtn:hover, .cbtn.active { background: var(--accent); border-color: var(--accent); }
+  #fps-badge {
+    font-size: 11.5px; font-weight: 700; padding: 3px 8px; border-radius: 6px;
+    background: rgba(0,0,0,0.45); border: 1px solid rgba(255,255,255,0.14);
+  }
+
+  #stage-wrap {
+    flex: 1; position: relative; width: 100%; height: 100%;
+    display: flex; align-items: center; justify-content: center; overflow: hidden;
+    cursor: ${cursorCss};
+  }
+  #project { width: 100%; height: 100%; }
+
+  .overlay {
+    position: fixed; inset: 0; z-index: 50;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; background: rgba(10, 12, 18, 0.92); backdrop-filter: blur(10px);
+    text-align: center; padding: 24px; transition: opacity .28s ease;
+  }
+  .overlay.hidden { opacity: 0; pointer-events: none; }
+  .overlay img.logo { max-width: 180px; max-height: 140px; border-radius: 16px; object-fit: contain; }
+  .loader-bar {
+    width: min(320px, 82vw); height: 8px; border-radius: 999px;
+    background: rgba(255,255,255,0.14); overflow: hidden;
+  }
+  .loader-fill {
+    height: 100%; width: 35%; border-radius: 999px; background: var(--accent);
+    animation: loadAnim 1.1s infinite ease-in-out alternate;
+  }
+  @keyframes loadAnim { from { transform: translateX(-30%); } to { transform: translateX(210%); } }
+  .play-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 15px 34px; border-radius: 999px; border: 0;
+    background: var(--accent); color: #fff; font-size: 18px; font-weight: 800;
+    cursor: pointer; box-shadow: 0 12px 34px rgba(0,0,0,0.45);
+    transition: transform .15s ease;
+  }
+  .play-btn:hover { transform: scale(1.06); }
+
+  #touch-hud { position: fixed; inset: 0; pointer-events: none; z-index: 40; display: none; }
+  .dpad {
+    position: absolute; left: 20px; bottom: 24px; width: 144px; height: 144px;
+    pointer-events: auto; touch-action: none;
+  }
+  .tbtn {
+    position: absolute; width: 48px; height: 48px; border-radius: 14px;
+    background: rgba(255,255,255,0.16); border: 1.5px solid rgba(255,255,255,0.32);
+    color: #fff; font-weight: 800; font-size: 15px;
+    display: grid; place-items: center; backdrop-filter: blur(4px);
+    touch-action: none;
+  }
+  .tbtn.active { background: var(--accent); transform: scale(0.94); }
+  .d-up { left: 48px; top: 0; }
+  .d-down { left: 48px; bottom: 0; }
+  .d-left { left: 0; top: 48px; }
+  .d-right { right: 0; top: 48px; }
+  .ab-pad {
+    position: absolute; right: 22px; bottom: 28px; display: flex; gap: 14px;
+    pointer-events: auto; touch-action: none;
+  }
+  .ab-pad .tbtn { position: static; width: 62px; height: 62px; border-radius: 50%; }
+
+  ${cfg.customCss || ''}
+</style>
+</head>
+<body class="${ctrlBarClass}">
+<div id="app">
+  <div id="controls">
+    <div class="ctrl-group">
+      ${cfg.showFlag ? `<button class="cbtn" id="btn-flag" title="${escapeHtml(t('gameStartTitle'))}">${svgFlag}</button><button class="cbtn" id="btn-stop" title="${escapeHtml(t('gameStopTitle'))}">${svgStop}</button>` : ''}
+      ${cfg.showPause ? `<button class="cbtn" id="btn-pause" title="${escapeHtml(t('gamePauseTitle'))}">${svgPause}</button>` : ''}
+      ${cfg.showFps ? `<span id="fps-badge">60 FPS</span>` : ''}
+    </div>
+    <div class="ctrl-group">
+      ${cfg.showFullscreen ? `<button class="cbtn" id="btn-fs" title="${escapeHtml(t('gameFsTitle'))}">${svgFs}</button>` : ''}
+    </div>
+  </div>
+  <div id="stage-wrap">
+    <div id="project"></div>
+  </div>
+</div>
+
+<div class="overlay" id="loading-overlay">
+  ${cfg.logo ? `<img class="logo" src="${escapeHtml(cfg.logo)}" alt="Logo">` : ''}
+  <h2 style="margin:0;">${escapeHtml(cfg.title)}</h2>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+  <small id="load-status" style="opacity:.78;">${escapeHtml(cfg.loadText)}</small>
+</div>
+
+<div class="overlay hidden" id="launch-overlay">
+  ${cfg.logo ? `<img class="logo" src="${escapeHtml(cfg.logo)}" alt="Cover">` : ''}
+  <h1 style="margin:0;">${escapeHtml(cfg.title)}</h1>
+  <button class="play-btn" id="btn-launch">${svgPlay} <span>${escapeHtml(t('gamePlayBtn'))}</span></button>
+</div>
+
+<div id="touch-hud">
+  <div class="dpad">
+    <div class="tbtn d-up" data-key="up"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 4 4 19 20 19"/></svg></div>
+    <div class="tbtn d-left" data-key="left"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="4 12 19 4 19 20"/></svg></div>
+    <div class="tbtn d-right" data-key="right"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="20 12 5 4 5 20"/></svg></div>
+    <div class="tbtn d-down" data-key="down"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 20 4 5 20 5"/></svg></div>
+  </div>
+  <div class="ab-pad">
+    <div class="tbtn" data-key="btnB">B</div>
+    <div class="tbtn" data-key="btnA">A</div>
+  </div>
+</div>
+
+${projectDataBlock}
+${engineScriptTag}
+
+<script>
+(async function(){
+  const CFG = ${safeJson(runtimeCfg)};
+  const loadingOv = document.getElementById('loading-overlay');
+  const launchOv = document.getElementById('launch-overlay');
+  const loadStatus = document.getElementById('load-status');
+  const PAUSE_SVG = ${JSON.stringify(svgPause)};
+  const PLAY_SVG = ${JSON.stringify(svgPlay)};
+
+  function showError(err) {
+    console.error(err);
+    loadStatus.textContent = ${JSON.stringify(t('errGeneric'))} + (err && err.message ? err.message : err);
+    loadStatus.style.color = '#ff6b6b';
+  }
+
+  function applyVmAndStageOptions(scaffolding, vm) {
+    scaffolding.width = CFG.width;
+    scaffolding.height = CFG.height;
+    if (typeof vm.setStageSize === 'function') vm.setStageSize(CFG.width, CFG.height);
+    if (vm.renderer) {
+      if (typeof vm.renderer.setMaxTextureDimension === 'function') vm.renderer.setMaxTextureDimension(CFG.maxTexture);
+      if (typeof vm.renderer.setUseHighQualityRender === 'function') vm.renderer.setUseHighQualityRender(CFG.hqPen);
+    }
+    vm.setTurboMode(CFG.turbo);
+    if (typeof vm.setFramerate === 'function') vm.setFramerate(CFG.fps);
+    if (typeof vm.setInterpolation === 'function') vm.setInterpolation(CFG.interpolation);
+    if (typeof vm.setRuntimeOptions === 'function') {
+      vm.setRuntimeOptions({
+        maxClones: CFG.maxClones === null ? Infinity : CFG.maxClones,
+        miscLimits: !CFG.removeMisc,
+        fencing: !CFG.disableFencing
+      });
+    }
+    if (typeof vm.setCompilerOptions === 'function') {
+      vm.setCompilerOptions({ enabled: CFG.compiler, warpTimer: CFG.warpTimer });
+    }
+  }
+
+  try {
+    if (typeof Scaffolding === 'undefined') throw new Error('Scaffolding engine failed to load.');
+
+    const scaffolding = new Scaffolding.Scaffolding();
+    scaffolding.width = CFG.width;
+    scaffolding.height = CFG.height;
+    scaffolding.resizeMode = CFG.resizeMode;
+    scaffolding.editableLists = false;
+    scaffolding.usePackagedRuntime = true;
+    scaffolding.setup();
+    scaffolding.appendTo(document.getElementById('project'));
+
+    const vm = scaffolding.vm;
+    window.scaffolding = scaffolding;
+    window.vm = vm;
+    window.Scratch = {
+      vm: vm,
+      renderer: vm.renderer,
+      audioEngine: vm.runtime && vm.runtime.audioEngine,
+      bitmapAdapter: vm.runtime && vm.runtime.v2BitmapAdapter,
+      videoProvider: vm.runtime && vm.runtime.ioDevices && vm.runtime.ioDevices.video && vm.runtime.ioDevices.video.provider
+    };
+
+    if (typeof scaffolding.setAccentColor === 'function') scaffolding.setAccentColor(CFG.accent);
+
+    scaffolding.setUsername(CFG.username.replace(/#+/g, m =>
+      Array.from({length: m.length}, () => Math.floor(Math.random() * 10)).join('')
+    ));
+    applyVmAndStageOptions(scaffolding, vm);
+
+    scaffolding.setExtensionSecurityManager({
+      getSandboxMode: () => CFG.unsandboxed ? 'unsandboxed' : 'iframe',
+      canLoadExtensionFromProject: () => true
+    });
+
+    if (CFG.cloudMode === 'turbowarp' && Scaffolding.Cloud && Scaffolding.Cloud.WebSocketProvider) {
+      scaffolding.addCloudProvider(new Scaffolding.Cloud.WebSocketProvider(
+        ['wss://clouddata.turbowarp.org', 'wss://clouddata.turbowarp.xyz'],
+        CFG.cloudId
+      ));
+    } else if (CFG.cloudMode === 'custom' && CFG.cloudWs && Scaffolding.Cloud && Scaffolding.Cloud.WebSocketProvider) {
+      scaffolding.addCloudProvider(new Scaffolding.Cloud.WebSocketProvider([CFG.cloudWs], CFG.cloudId));
+    } else if (CFG.cloudMode === 'local') {
+      if (Scaffolding.Cloud && Scaffolding.Cloud.LocalStorageProvider) {
+        scaffolding.addCloudProvider(new Scaffolding.Cloud.LocalStorageProvider('tw-cloud:' + CFG.cloudId));
+      } else {
+        const storageKey = 'tw-cloud:' + CFG.cloudId;
+        scaffolding.addCloudProvider({
+          enable() {
+            try {
+              const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+              for (const [k, v] of Object.entries(saved)) vm.postIOData('cloud', { varUpdate: { name: k, value: v } });
+            } catch {}
+          },
+          handleUpdateVariable(name, value) {
+            try {
+              const saved = JSON.parse(localStorage.getItem(storageKey) || '{}');
+              saved[name] = value;
+              localStorage.setItem(storageKey, JSON.stringify(saved));
+            } catch {}
+          },
+          requestCloseConnection() {}
+        });
+      }
+    }
+
+    for (const url of (CFG.extensions || [])) {
+      try { await vm.extensionManager.loadExtensionURL(url); }
+      catch (e) { console.warn('Extension failed to load:', url, e); }
+    }
+
+    let projectBuffer;
+    if (CFG.zipMode) {
+      const resp = await fetch(CFG.projectFilename);
+      if (!resp.ok) throw new Error('Failed to load project file: ' + CFG.projectFilename);
+      projectBuffer = await resp.arrayBuffer();
+    } else {
+      const b64 = document.getElementById('tw-project-b64').textContent.trim();
+      const resp = await fetch('data:application/octet-stream;base64,' + b64);
+      projectBuffer = await resp.arrayBuffer();
+    }
+
+    await scaffolding.loadProject(projectBuffer);
+    applyVmAndStageOptions(scaffolding, vm);
+
+    const ro = new ResizeObserver(() => scaffolding.relayout());
+    ro.observe(document.getElementById('stage-wrap'));
+    requestAnimationFrame(() => scaffolding.relayout());
+
+    const btnFlag = document.getElementById('btn-flag');
+    const btnStop = document.getElementById('btn-stop');
+    const btnPause = document.getElementById('btn-pause');
+    const btnFs = document.getElementById('btn-fs');
+
+    let isPaused = false;
+    const setPaused = (p) => {
+      isPaused = p;
+      if (btnPause) {
+        btnPause.innerHTML = isPaused ? PLAY_SVG : PAUSE_SVG;
+        btnPause.classList.toggle('active', isPaused);
+      }
+      const ac = vm.runtime && vm.runtime.audioEngine && vm.runtime.audioEngine.audioContext;
+      if (ac) isPaused ? ac.suspend() : ac.resume();
+    };
+
+    if (btnFlag) btnFlag.onclick = () => { if (isPaused) setPaused(false); scaffolding.greenFlag(); };
+    if (btnStop) btnStop.onclick = () => { if (isPaused) setPaused(false); vm.stopAll(); };
+    if (btnPause && vm.runtime && vm.runtime._step) {
+      const origStep = vm.runtime._step.bind(vm.runtime);
+      vm.runtime._step = function() { if (!isPaused) origStep(); };
+      btnPause.onclick = () => setPaused(!isPaused);
+    }
+
+    if (btnFs) {
+      btnFs.onclick = () => {
+        if (!document.fullscreenElement) document.getElementById('app').requestFullscreen().catch(()=>{});
+        else document.exitFullscreen().catch(()=>{});
+      };
+    }
+
+    if (CFG.showFps) {
+      const badge = document.getElementById('fps-badge');
+      let frames = 0, last = performance.now();
+      const tick = (now) => {
+        frames++;
+        if (now - last >= 500) {
+          badge.textContent = Math.round((frames * 1000) / (now - last)) + ' FPS';
+          frames = 0; last = now;
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+
+    if (CFG.touchControls) {
+      const hud = document.getElementById('touch-hud');
+      hud.style.display = 'block';
+      const keyMap = CFG.dpadKeys === 'wasd'
+        ? { up: 'KeyW', down: 'KeyS', left: 'KeyA', right: 'KeyD', btnA: CFG.touchA, btnB: CFG.touchB }
+        : { up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight', btnA: CFG.touchA, btnB: CFG.touchB };
+
+      const keyName = (code) => {
+        if (code === 'Space') return ' ';
+        if (code.startsWith('Key')) return code.slice(3).toLowerCase();
+        return code;
+      };
+
+      hud.querySelectorAll('[data-key]').forEach(el => {
+        const code = keyMap[el.dataset.key];
+        const key = keyName(code);
+        const send = (type) => {
+          el.classList.toggle('active', type === 'keydown');
+          document.dispatchEvent(new KeyboardEvent(type, { key, code, bubbles: true }));
+        };
+        el.addEventListener('pointerdown', e => { e.preventDefault(); try { el.setPointerCapture(e.pointerId); } catch {} send('keydown'); });
+        el.addEventListener('pointerup', e => { e.preventDefault(); send('keyup'); });
+        el.addEventListener('pointercancel', () => send('keyup'));
+      });
+    }
+
+    loadingOv.classList.add('hidden');
+    if (CFG.autoplay) {
+      scaffolding.start();
+    } else {
+      launchOv.classList.remove('hidden');
+      document.getElementById('btn-launch').onclick = () => {
+        launchOv.classList.add('hidden');
+        scaffolding.start();
+      };
+    }
+
+    ${cfg.customJs || ''}
+  } catch (err) {
+    showError(err);
+  }
+})();
+<` + `/script>
+</body>
+</html>`;
+  }
+
+  function downloadBlob(blob, filename) {
+    const a = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    a.href = url; a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+  }
+
+  function safeExportName(ext) {
+    const name = ($('cfgTitle').value || 'scratch-game').trim().replace(/[\\/:*?"<>|]+/g, '-');
+    return name + '.' + ext;
+  }
+
+  $('btnExportOffline').addEventListener('click', async () => {
+    if (!state.projectBuffer) return showToast(t('msgNoProject'), 'err');
+    try {
+      setStatus(t('msgBuilding'), 35);
+      const [b64, engineCode] = await Promise.all([
+        ensureBase64(),
+        getEngineCode($('cfgWithMusic').checked)
+      ]);
+      setStatus(t('msgBuilding'), 85);
+      const html = buildGeneratedHtml({ mode: 'offline', engineCode, base64Data: b64 });
+      downloadBlob(new Blob([html], { type: 'text/html;charset=utf-8' }), safeExportName('html'));
+      setStatus(t('msgDone'), 100);
+      showToast(t('msgDone'), 'ok');
+      setTimeout(() => setStatus(''), 2500);
+    } catch (e) {
+      showToast(t('errGeneric') + e.message, 'err');
+      setStatus('');
+    }
+  });
+
+  $('btnExportCdn').addEventListener('click', async () => {
+    if (!state.projectBuffer) return showToast(t('msgNoProject'), 'err');
+    setStatus(t('msgBuilding'), 60);
+    const b64 = await ensureBase64();
+    const html = buildGeneratedHtml({ mode: 'cdn', base64Data: b64 });
+    downloadBlob(new Blob([html], { type: 'text/html;charset=utf-8' }), safeExportName('cdn.html'));
+    setStatus(t('msgDone'), 100);
+    showToast(t('msgDone'), 'ok');
+    setTimeout(() => setStatus(''), 2500);
+  });
+
+  $('btnExportZip').addEventListener('click', async () => {
+    if (!state.projectBuffer) return showToast(t('msgNoProject'), 'err');
+    try {
+      setStatus(t('msgBuilding'), 35);
+      const engineCode = await getEngineCode($('cfgWithMusic').checked);
+      const entries = [
+        { name: 'scaffolding.js', data: engineCode },
+        { name: 'project.sb3', data: new Uint8Array(state.projectBuffer) }
+      ];
+      let favHref = '';
+      if (state.faviconDataUrl && state.faviconDataUrl.startsWith('data:')) {
+        const res = await fetch(state.faviconDataUrl);
+        entries.push({ name: 'favicon.png', data: new Uint8Array(await res.arrayBuffer()) });
+        favHref = 'favicon.png';
+      }
+      const html = buildGeneratedHtml({ mode: 'zip', projectFilename: 'project.sb3', faviconHref: favHref });
+      entries.unshift({ name: 'index.html', data: html });
+      const zip = buildZipBlob(entries);
+      downloadBlob(zip, safeExportName('zip'));
+      setStatus(t('msgDone'), 100);
+      showToast(t('msgDone'), 'ok');
+      setTimeout(() => setStatus(''), 2500);
+    } catch (e) {
+      showToast(t('errZip') + e.message, 'err');
+      setStatus('');
+    }
+  });
+
+  $('btnLiveTest').addEventListener('click', async () => {
+    if (!state.projectBuffer) return showToast(t('msgNoProject'), 'err');
+    try {
+      setStatus(t('msgPreparingTest'), 45);
+      const b64 = await ensureBase64();
+      const key = $('cfgWithMusic').checked ? 'scaffolding-with-music' : 'scaffolding-min';
+      const cached = await dbGet(key);
+      const html = cached
+        ? buildGeneratedHtml({ mode: 'offline', engineCode: cached, base64Data: b64 })
+        : buildGeneratedHtml({ mode: 'cdn', base64Data: b64 });
+
+      if (state.previewBlobUrl) URL.revokeObjectURL(state.previewBlobUrl);
+      state.previewBlobUrl = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+      $('previewPlaceholder').style.display = 'none';
+      $('previewIframe').style.display = 'block';
+      $('previewIframe').src = state.previewBlobUrl;
+      $('btnStopTest').style.display = 'inline-flex';
+      $('btnFsTest').style.display = 'inline-flex';
+      setStatus('');
+    } catch (e) {
+      showToast(t('errPreview') + e.message, 'err');
+      setStatus('');
+    }
+  });
+
+  $('btnFsTest').addEventListener('click', () => {
+    const iframe = $('previewIframe');
+    if (iframe.requestFullscreen) iframe.requestFullscreen().catch(() => {});
+  });
+
+  $('btnStopTest').addEventListener('click', () => {
+    $('previewIframe').src = 'about:blank';
+    $('previewIframe').style.display = 'none';
+    $('previewPlaceholder').style.display = 'block';
+    $('btnStopTest').style.display = 'none';
+    $('btnFsTest').style.display = 'none';
+  });
+
+  $('btnViewSource').addEventListener('click', async () => {
+    if (!state.projectBuffer) return showToast(t('msgNoProject'), 'err');
+    const b64 = await ensureBase64();
+    $('codeViewArea').value = buildGeneratedHtml({ mode: 'cdn', base64Data: b64 });
+    $('codeModal').classList.add('open');
+  });
+  $('btnCloseModal').addEventListener('click', () => $('codeModal').classList.remove('open'));
+  $('btnCopyCode').addEventListener('click', async () => {
+    await navigator.clipboard.writeText($('codeViewArea').value);
+    $('btnCopyCode').textContent = t('btnCopied');
+    setTimeout(() => { $('btnCopyCode').textContent = t('btnCopy'); }, 1500);
+  });
+
+  applyLanguage(currentLang);
+  refreshEngineStatus();
+})();
+</script>
+</body>
+</html>
